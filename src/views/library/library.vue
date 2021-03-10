@@ -1,0 +1,75 @@
+<template>
+  <v-container>
+    <v-text-field
+      v-model="searchString"
+      label="Название или автор (минимум три символа)"
+      clearable
+      prepend-inner-icon="mdi-magnify"
+    ></v-text-field>
+    <v-container fluid>
+      <v-row dense>
+        <book-card
+          v-for="book in books"
+          :key="book.id"
+          :book="book"
+        ></book-card>
+      </v-row>
+    </v-container>
+    <div v-intersect="next"></div>
+  </v-container>
+</template>
+
+<script lang="ts">
+import Component from 'vue-class-component'
+import { Inject, Vue, Watch } from 'vue-property-decorator'
+
+import BookCard from '@/views/library/bookCard.vue'
+import BookService from '@/services/bookService'
+import { BookDto } from '@/model/bookDto'
+
+@Component({
+  components: {
+    BookCard
+  }
+})
+export default class Library extends Vue {
+  @Inject() readonly bookService!: BookService;
+
+  public requestCount = 20
+  public allElements = false
+  public searchString = '';
+  public books: BookDto[] = []
+
+  public async mounted () {
+    this.books = await this.bookService.retrieve(undefined, undefined, this.requestCount)
+    if (this.books.length < this.requestCount) {
+      this.allElements = true
+    }
+  }
+
+  @Watch('searchString')
+  public async searchChange (common: string, oldCommon: string) {
+    if (common && common !== '' && common.length >= 3) {
+      this.books = await this.bookService.retrieve(common, undefined, this.requestCount)
+      this.allElements = this.books.length < this.requestCount
+    } else if (oldCommon && oldCommon !== '' && oldCommon.length >= 3) {
+      this.books = await this.bookService.retrieve(undefined, undefined, this.requestCount)
+      this.allElements = this.books.length < this.requestCount
+    }
+  }
+
+  public async next () {
+    if (!this.allElements && this.books.length > 0) {
+      console.log('next')
+      const ids: number[] = this.books
+        .map(book => Number(book.id))
+      const maxId = Math.max.apply(null, ids)
+      const nextBooks = await this.bookService.retrieve(this.searchString, maxId, this.requestCount)
+      nextBooks.forEach(book => this.books.push(book))
+      if (nextBooks.length < this.requestCount) {
+        this.allElements = true
+      }
+    }
+  }
+}
+</script>
