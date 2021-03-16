@@ -9,8 +9,8 @@
 import Component from 'vue-class-component'
 import { Vue } from 'vue-property-decorator'
 
-import HomeAuth from '@/views/home/homeAuth.vue'
-import HomeNotAuth from '@/views/home/homeNotAuth.vue'
+import HomeAuth from '@/components/home/homeAuth.vue'
+import HomeNotAuth from '@/components/home/homeNotAuth.vue'
 
 @Component({
   components: {

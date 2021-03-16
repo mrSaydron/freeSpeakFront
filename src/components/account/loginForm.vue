@@ -43,7 +43,7 @@
 import Component from 'vue-class-component'
 import { Vue, Inject } from 'vue-property-decorator'
 
-import AccountService from '@/services/accountService.ts'
+import AccountService from '@/services/accountService.js'
 
 @Component({
   components: {}

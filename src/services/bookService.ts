@@ -4,7 +4,7 @@ import axios from 'axios'
 
 import { BookDto } from '@/model/bookDto.ts'
 
-const baseApiUrl = 'api/book'
+const baseApiUrl = '/api/book'
 
 export default class BookService {
   public find (id: number): Promise<BookDto> {

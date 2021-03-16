@@ -3,10 +3,11 @@ import VueRouter, { RouteConfig } from 'vue-router'
 
 import { Authority } from '@/shared/authority'
 
-import Home from '../views/home/home.vue'
-import LoginForm from '@/views/account/loginForm.vue'
-import Library from '@/views/library/library.vue'
-import NewBook from '@/views/newBook/newBook.vue'
+import Home from '../components/home/home.vue'
+import LoginForm from '@/components/account/loginForm.vue'
+import Library from '@/components/library/library.vue'
+import NewBook from '@/components/newBook/newBook.vue'
+import Book from '@/components/book/book.vue'
 
 Vue.use(VueRouter)
 
@@ -34,6 +35,16 @@ const routes: Array<RouteConfig> = [
     path: '/new-book',
     name: 'NewBook',
     component: NewBook,
+    meta: {
+      authorities: [Authority.USER],
+      backPage: '/library'
+    }
+  },
+  {
+    path: '/book/:id',
+    props: true,
+    name: 'Book',
+    component: Book,
     meta: {
       authorities: [Authority.USER],
       backPage: '/library'

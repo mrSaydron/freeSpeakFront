@@ -101,7 +101,7 @@ import { BookDto } from '@/model/bookDto'
   }
 })
 export default class Library extends Vue {
-  @Inject() readonly bookService!: BookService;
+  @Inject() readonly bookService!: BookService
 
   public imageSrc: string | undefined = 'http://hq-oboi.ru/photo/kotik_kak_pushistyy_komochek_1920x1200.jpg'
   public book: BookDto = new BookDto()

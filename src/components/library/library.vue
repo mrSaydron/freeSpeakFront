@@ -23,7 +23,7 @@
 import Component from 'vue-class-component'
 import { Inject, Vue, Watch } from 'vue-property-decorator'
 
-import BookCard from '@/views/library/bookCard.vue'
+import BookCard from '@/components/library/bookCard.vue'
 import BookService from '@/services/bookService'
 import { BookDto } from '@/model/bookDto'
 
@@ -37,7 +37,7 @@ export default class Library extends Vue {
 
   public requestCount = 20
   public allElements = false
-  public searchString = '';
+  public searchString = ''
   public books: BookDto[] = []
 
   public async mounted () {

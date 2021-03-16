@@ -1,6 +1,6 @@
 <template>
   <v-col sm="3">
-    <v-card>
+    <v-card @click="toBook(book.id)">
       <v-img
         src="http://hq-oboi.ru/photo/kotik_kak_pushistyy_komochek_1920x1200.jpg"
         class="align-end shadow-text"
@@ -24,6 +24,10 @@ import { BookDto } from '@/model/bookDto'
 })
 export default class BookCard extends Vue {
   @Prop(Object) readonly book: BookDto | undefined
+
+  public toBook (id: number) {
+    this.$router.push(`/book/${id}`)
+  }
 }
 </script>
 
