@@ -20,10 +20,13 @@ export default class BookService {
     })
   }
 
-  public async retrieve (common?: string, startId?: number, requestCount?: number): Promise<BookDto[]> {
+  public async retrieve (titleAuthor?: string,
+                         orPublicBook?: boolean,
+                         startId?: number,
+                         requestCount?: number): Promise<BookDto[]> {
     return new Promise<BookDto[]>((resolve, reject) => {
       axios
-        .get(baseApiUrl + BookService.requestQuery(common, startId, requestCount))
+        .get(baseApiUrl + BookService.requestQuery(titleAuthor, orPublicBook, startId, requestCount))
         .then(res => {
           resolve(res.data)
         })
@@ -33,14 +36,20 @@ export default class BookService {
     })
   }
 
-  private static requestQuery (common?: string, startId?: number, requestCount?: number): string {
+  private static requestQuery (titleAuthor?: string,
+                               orPublicBook?: boolean,
+                               startId?: number,
+                               requestCount?: number): string {
     let result = `?sort=id,asc&size=${requestCount || 8}`
 
-    if (common) {
-      result += `&common.contains=${common}`
+    if (titleAuthor) {
+      result += `&titleAuthor.contains=${titleAuthor}`
     }
     if (startId) {
       result += `&id.greaterThan=${startId}`
+    }
+    if (orPublicBook) {
+      result += `&orPublicBook.equals=${orPublicBook}`
     }
 
     return result
@@ -78,6 +87,19 @@ export default class BookService {
         .put(`${baseApiUrl}`, entity)
         .then(res => {
           resolve(res.data)
+        })
+        .catch(err => {
+          reject(err)
+        })
+    })
+  }
+
+  public async sendOpenBook (id: number): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
+      axios
+        .put(`${baseApiUrl}/open/${id}`)
+        .then(res => {
+          resolve(res)
         })
         .catch(err => {
           reject(err)

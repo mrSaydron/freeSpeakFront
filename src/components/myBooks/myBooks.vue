@@ -32,7 +32,7 @@ import { BookDto } from '@/model/bookDto'
     BookCard
   }
 })
-export default class Library extends Vue {
+export default class MyBooks extends Vue {
   @Inject() readonly bookService!: BookService;
 
   public requestCount = 20
@@ -41,7 +41,7 @@ export default class Library extends Vue {
   public books: BookDto[] = []
 
   public async mounted () {
-    this.books = await this.bookService.retrieve(undefined, true, undefined, this.requestCount)
+    this.books = await this.bookService.retrieve(undefined, false, undefined, this.requestCount)
     if (this.books.length < this.requestCount) {
       this.allElements = true
     }
@@ -50,10 +50,10 @@ export default class Library extends Vue {
   @Watch('searchString')
   public async searchChange (common: string, oldCommon: string) {
     if (common && common !== '' && common.length >= 3) {
-      this.books = await this.bookService.retrieve(common, true, undefined, this.requestCount)
+      this.books = await this.bookService.retrieve(common, false, undefined, this.requestCount)
       this.allElements = this.books.length < this.requestCount
     } else if (oldCommon && oldCommon !== '' && oldCommon.length >= 3) {
-      this.books = await this.bookService.retrieve(undefined, true, undefined, this.requestCount)
+      this.books = await this.bookService.retrieve(undefined, false, undefined, this.requestCount)
       this.allElements = this.books.length < this.requestCount
     }
   }
@@ -64,7 +64,7 @@ export default class Library extends Vue {
       const ids: number[] = this.books
         .map(book => Number(book.id))
       const maxId = Math.max.apply(null, ids)
-      const nextBooks = await this.bookService.retrieve(this.searchString, true, maxId, this.requestCount)
+      const nextBooks = await this.bookService.retrieve(this.searchString, false, maxId, this.requestCount)
       nextBooks.forEach(book => this.books.push(book))
       if (nextBooks.length < this.requestCount) {
         this.allElements = true

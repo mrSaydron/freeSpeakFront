@@ -57,7 +57,9 @@ export default class Book extends Vue {
 
   public async mounted () {
     if (this.id) {
-      this.book = await this.bookService.find(Number(this.id))
+      const id = Number(this.id)
+      this.bookService.sendOpenBook(id).catch(err => console.log(err))
+      this.book = await this.bookService.find(Number(id))
       if (this.book && this.book.dictionaryId) {
         this.dictionary = await this.dictionaryService.find(this.book.dictionaryId)
       }
