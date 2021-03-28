@@ -1,13 +1,13 @@
 <template>
-    <v-container>
-      <v-data-table
-        :headers="headers"
-        :items="dictionary.dictionaryWords"
-        :items-per-page="9999"
-        :sort-by="['word.word']"
-        hide-default-footer
-      ></v-data-table>
-    </v-container>
+  <v-container>
+    <v-data-table
+      :headers="headers"
+      :items="dictionary.dictionaryWords"
+      :items-per-page="99999"
+      :sort-by="['word.word']"
+      hide-default-footer
+    ></v-data-table>
+  </v-container>
 </template>
 
 <script lang="ts">

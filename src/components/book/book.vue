@@ -37,7 +37,7 @@ import { BookDto } from '@/model/bookDto'
 import BookText from '@/components/book/bookText.vue'
 import BookDictionary from '@/components/book/bookDictionary.vue'
 import { DictionaryDto } from '@/model/dictionaryDto'
-import DictionaryService from '@/services/dictionaryService'
+import BookDictionaryService from '@/services/bookDictionaryService'
 
 @Component({
   components: {
@@ -49,7 +49,7 @@ export default class Book extends Vue {
   @Prop(String) readonly id?: string
 
   @Inject() readonly bookService!: BookService
-  @Inject() readonly dictionaryService!: DictionaryService
+  @Inject() readonly dictionaryService!: BookDictionaryService
 
   public book: BookDto = {}
   public dictionary: DictionaryDto = {}

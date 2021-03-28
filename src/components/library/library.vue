@@ -33,7 +33,7 @@ import { BookDto } from '@/model/bookDto'
   }
 })
 export default class Library extends Vue {
-  @Inject() readonly bookService!: BookService;
+  @Inject() readonly bookService!: BookService
 
   public requestCount = 20
   public allElements = false

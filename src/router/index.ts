@@ -9,6 +9,7 @@ import Library from '@/components/library/library.vue'
 import NewBook from '@/components/newBook/newBook.vue'
 import Book from '@/components/book/book.vue'
 import MyBooks from '@/components/myBooks/myBooks.vue'
+import Dictionary from '@/components/dictionary/dictionary.vue'
 
 Vue.use(VueRouter)
 
@@ -58,6 +59,15 @@ const routes: Array<RouteConfig> = [
     meta: {
       authorities: [Authority.USER],
       backPage: '/library'
+    }
+  },
+  {
+    path: '/dictionary',
+    name: 'Dictionary',
+    component: Dictionary,
+    meta: {
+      authorities: [Authority.USER],
+      backPage: '/'
     }
   }
 ]

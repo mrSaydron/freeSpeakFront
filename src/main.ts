@@ -7,7 +7,8 @@ import vuetify from './plugins/vuetify'
 import { initVueApp } from '@/config/config'
 import AccountService from '@/services/accountService'
 import BookService from '@/services/bookService'
-import DictionaryService from '@/services/dictionaryService'
+import BookDictionaryService from '@/services/bookDictionaryService'
+import WordService from '@/services/wordService'
 
 Vue.config.productionTip = false
 
@@ -15,7 +16,8 @@ initVueApp(Vue)
 
 const accountService = new AccountService(store, router)
 const bookService = new BookService()
-const dictionaryService = new DictionaryService()
+const dictionaryService = new BookDictionaryService()
+const wordService = new WordService()
 
 router.beforeEach((to, from, next) => {
   if (!to.matched.length) {
@@ -45,6 +47,7 @@ new Vue({
   provide: {
     accountService,
     bookService,
-    dictionaryService
+    dictionaryService,
+    wordService
   }
 }).$mount('#app')

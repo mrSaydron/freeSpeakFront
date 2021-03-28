@@ -18,7 +18,7 @@
       <v-list-item link>
         <v-list-item-title>МОЙ СЛОВАРЬ</v-list-item-title>
       </v-list-item>
-      <v-list-item link>
+      <v-list-item to="/dictionary">
         <v-list-item-title>СЛОВАРЬ</v-list-item-title>
       </v-list-item>
     </v-list>

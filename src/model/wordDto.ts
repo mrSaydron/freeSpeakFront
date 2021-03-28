@@ -3,6 +3,9 @@ export interface Word {
   word?: string,
   partOfSpeech?: string,
   translate?: string,
+  totalAmount?: number,
+  urlPicture?: string,
+  urlAudio?: string
 }
 
 export class WordDto implements Word {
@@ -11,6 +14,9 @@ export class WordDto implements Word {
     public word?: string,
     public partOfSpeech?: string,
     public translate?: string,
+    public totalAmount?: number,
+    public urlPicture?: string,
+    public urlAudio?: string
   ) {
   }
 }

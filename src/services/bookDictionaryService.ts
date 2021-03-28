@@ -3,7 +3,7 @@ import { DictionaryDto } from '@/model/dictionaryDto'
 
 const baseApiUrl = '/api/dictionary'
 
-export default class DictionaryService {
+export default class BookDictionaryService {
   public find (id: number): Promise<DictionaryDto> {
     return new Promise<DictionaryDto>((resolve, reject) => {
       axios

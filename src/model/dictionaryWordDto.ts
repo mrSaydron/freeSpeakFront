@@ -1,4 +1,4 @@
-import { WordDto } from '@/model/WordDto'
+import { WordDto } from '@/model/wordDto'
 
 export interface DictionaryWord {
   id?: number,
