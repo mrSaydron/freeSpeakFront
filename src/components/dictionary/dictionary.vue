@@ -29,6 +29,7 @@ import { Inject, Vue, Watch } from 'vue-property-decorator'
 import WordService from '@/services/wordService'
 import { WordDto } from '@/model/wordDto'
 import { asc, desc, SortValue } from '@/model/sortValue'
+import { PartOfSpeechEnum } from '@/model/enums/partOfSpeechEnum'
 
 @Component({
   components: {}
@@ -56,6 +57,11 @@ export default class Dictionary extends Vue {
     {
       text: 'Перевод',
       value: 'translate',
+      sortable: false
+    },
+    {
+      text: 'Часть речи',
+      value: 'partOfSpeechNote',
       sortable: false
     },
     {
@@ -134,12 +140,17 @@ export default class Dictionary extends Vue {
       this.requestCount)
     this.allElements = words.length < this.requestCount
 
-    words.forEach(word => {
-      if (word.frequency) {
-        word.frequencyPercent = (word.frequency * 100).toFixed(2) + ' %'
-      }
-    })
+    words.forEach(word => Dictionary.fillWord(word))
     return words
+  }
+
+  private static fillWord (word: WordDto) {
+    if (word.frequency) {
+      word.frequencyPercent = (word.frequency * 100).toFixed(2) + ' %'
+    }
+    if (word.partOfSpeech) {
+      word.partOfSpeechNote = PartOfSpeechEnum[word.partOfSpeech]
+    }
   }
 }
 </script>

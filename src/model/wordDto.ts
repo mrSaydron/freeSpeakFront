@@ -20,6 +20,7 @@ export class WordDto implements Word {
     public urlPicture?: string,
     public urlAudio?: string,
     public frequency?: number,
-    public frequencyPercent?: string
+    public frequencyPercent?: string,
+    public partOfSpeechNote?: any
   ) {}
 }
