@@ -66,9 +66,9 @@ export default class WordService {
       }
     }
     if (amountSort && amountSort.sortDirection) {
-      result += `&sort=word,${amountSort.sortDirection.direction}`
+      result += `&sort=totalAmount,${amountSort.sortDirection.direction}`
       if (amountSort.maxValue) {
-        result += `&startWord.${amountSort.sortDirection.compare}=${amountSort.maxValue}`
+        result += `&startAmount.${amountSort.sortDirection.compare}=${amountSort.maxValue}`
       }
     }
 

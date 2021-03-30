@@ -5,7 +5,9 @@ export interface Word {
   translate?: string,
   totalAmount?: number,
   urlPicture?: string,
-  urlAudio?: string
+  urlAudio?: string,
+  frequency?: number,
+  frequencyPercent?: string
 }
 
 export class WordDto implements Word {
@@ -16,7 +18,8 @@ export class WordDto implements Word {
     public translate?: string,
     public totalAmount?: number,
     public urlPicture?: string,
-    public urlAudio?: string
-  ) {
-  }
+    public urlAudio?: string,
+    public frequency?: number,
+    public frequencyPercent?: string
+  ) {}
 }

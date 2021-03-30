@@ -56,11 +56,11 @@ export default class Dictionary extends Vue {
     {
       text: 'Перевод',
       value: 'translate',
-      sortable: true
+      sortable: false
     },
     {
       text: 'Частота',
-      value: 'totalAmount',
+      value: 'frequencyPercent',
       sortable: true
     }
   ]
@@ -80,23 +80,7 @@ export default class Dictionary extends Vue {
     if (this.amountSort) {
       this.amountSort.maxValue = undefined
     }
-    if (wordFilter && wordFilter !== '') {
-      this.words = await this.wordService.retrieve(
-        wordFilter,
-        undefined,
-        this.wordSort,
-        this.amountSort,
-        this.requestCount)
-      this.allElements = this.words.length < this.requestCount
-    } else {
-      this.words = await this.wordService.retrieve(
-        undefined,
-        undefined,
-        this.wordSort,
-        this.amountSort,
-        this.requestCount)
-      this.allElements = this.words.length < this.requestCount
-    }
+    this.words = await this.retrieve()
     this.loading = false
   }
 
@@ -119,17 +103,12 @@ export default class Dictionary extends Vue {
     if (item === 'word') {
       this.wordSort = new SortValue(undefined, asc)
       this.amountSort = undefined
-    } else if (item === 'totalAmount') {
+    } else if (item === 'frequencyPercent') {
       this.wordSort = undefined
       this.amountSort = new SortValue(undefined, asc)
     }
 
-    this.words = await this.wordService.retrieve(
-      this.searchString,
-      undefined,
-      this.wordSort,
-      this.amountSort,
-      this.requestCount)
+    this.words = await this.retrieve()
   }
 
   public async updateSortDesc (value: boolean[]): Promise<void> {
@@ -141,22 +120,25 @@ export default class Dictionary extends Vue {
       this.amountSort.sortDirection = direction ? desc : asc
     }
 
-    this.words = await this.wordService.retrieve(
-      this.searchString,
-      undefined,
-      this.wordSort,
-      this.amountSort,
-      this.requestCount)
+    this.words = await this.retrieve()
   }
 
   private async retrieve (): Promise<WordDto[]> {
+    const searchString = this.searchString === '' ? undefined : this.searchString
+
     const words = await this.wordService.retrieve(
-      this.searchString,
+      searchString,
       undefined,
       this.wordSort,
       this.amountSort,
       this.requestCount)
     this.allElements = words.length < this.requestCount
+
+    words.forEach(word => {
+      if (word.frequency) {
+        word.frequencyPercent = (word.frequency * 100).toFixed(2) + ' %'
+      }
+    })
     return words
   }
 }
