@@ -9,6 +9,7 @@ import AccountService from '@/services/accountService'
 import BookService from '@/services/bookService'
 import BookDictionaryService from '@/services/bookDictionaryService'
 import WordService from '@/services/wordService'
+import UserWordService from '@/services/userWordService'
 
 Vue.config.productionTip = false
 
@@ -18,6 +19,7 @@ const accountService = new AccountService(store, router)
 const bookService = new BookService()
 const dictionaryService = new BookDictionaryService()
 const wordService = new WordService()
+const userWordService = new UserWordService()
 
 router.beforeEach((to, from, next) => {
   if (!to.matched.length) {
@@ -48,6 +50,7 @@ new Vue({
     accountService,
     bookService,
     dictionaryService,
-    wordService
+    wordService,
+    userWordService
   }
 }).$mount('#app')

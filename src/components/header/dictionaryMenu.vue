@@ -15,7 +15,7 @@
       <v-list-item link>
         <v-list-item-title>КАРТОЧКИ</v-list-item-title>
       </v-list-item>
-      <v-list-item link>
+      <v-list-item to="/my-dictionary">
         <v-list-item-title>МОЙ СЛОВАРЬ</v-list-item-title>
       </v-list-item>
       <v-list-item to="/dictionary">

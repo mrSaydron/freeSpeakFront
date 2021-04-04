@@ -17,7 +17,23 @@ import { SortDirection } from '@/model/enums/sortDirection'
       :server-items-length="words.length"
       :sort-by.sync="sortBy"
       :sort-desc.sync="sortDesc"
-    ></v-data-table>
+    >
+      <template v-slot:item.action="{ item }">
+        <v-icon
+          v-if="!item.userHas"
+          class="mr-2"
+          @click="addWord(item)"
+        >
+          mdi-plus
+        </v-icon>
+        <v-icon
+          v-else
+          @click="removeWord(item)"
+        >
+          mdi-close
+        </v-icon>
+      </template>
+    </v-data-table>
     <div v-intersect="next"></div>
   </v-container>
 </template>
@@ -30,12 +46,14 @@ import WordService from '@/services/wordService'
 import { WordDto } from '@/model/wordDto'
 import { asc, desc, SortValue } from '@/model/sortValue'
 import { PartOfSpeechEnum } from '@/model/enums/partOfSpeechEnum'
+import UserWordService from '@/services/userWordService'
 
 @Component({
   components: {}
 })
 export default class Dictionary extends Vue {
   @Inject() readonly wordService!: WordService
+  @Inject() readonly userWordService!: UserWordService
 
   public requestCount = 20
   public allElements = false
@@ -68,6 +86,11 @@ export default class Dictionary extends Vue {
       text: 'Частота',
       value: 'frequencyPercent',
       sortable: true
+    },
+    {
+      text: '',
+      value: 'action',
+      sortable: false
     }
   ]
 
@@ -144,12 +167,35 @@ export default class Dictionary extends Vue {
     return words
   }
 
+  /**
+   * Запольняет слово полями для отображения
+   */
   private static fillWord (word: WordDto) {
     if (word.frequency) {
       word.frequencyPercent = (word.frequency * 100).toFixed(2) + ' %'
     }
     if (word.partOfSpeech) {
       word.partOfSpeechNote = PartOfSpeechEnum[word.partOfSpeech]
+    }
+  }
+
+  /**
+   * Добавление слова в словарь пользователя
+   */
+  public addWord (word: WordDto): void {
+    word.userHas = !word.userHas
+    if (word.id) {
+      this.userWordService.addWord(word.id)
+    }
+  }
+
+  /**
+   * Удаление слова из словаря пользователя
+   */
+  public removeWord (word: WordDto): void {
+    word.userHas = !word.userHas
+    if (word.id) {
+      this.userWordService.removeWord(word.id)
     }
   }
 }
