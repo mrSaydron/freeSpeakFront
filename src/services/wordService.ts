@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { WordDto } from '@/model/wordDto.ts'
 import { SortValue } from '@/model/sortValue'
+import { PartOfSpeechEnum } from '@/model/enums/partOfSpeechEnum'
 
 // import buildPaginationQueryOpts from '@/shared/sort/sorts';
 
@@ -36,6 +37,7 @@ export default class WordService {
           amountSort,
           requestCount))
         .then(res => {
+          res.data.forEach((word: WordDto) => WordDto.fill(word))
           resolve(res.data)
         })
         .catch(err => {

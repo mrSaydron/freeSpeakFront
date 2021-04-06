@@ -163,20 +163,7 @@ export default class Dictionary extends Vue {
       this.requestCount)
     this.allElements = words.length < this.requestCount
 
-    words.forEach(word => Dictionary.fillWord(word))
     return words
-  }
-
-  /**
-   * Запольняет слово полями для отображения
-   */
-  private static fillWord (word: WordDto) {
-    if (word.frequency) {
-      word.frequencyPercent = (word.frequency * 100).toFixed(2) + ' %'
-    }
-    if (word.partOfSpeech) {
-      word.partOfSpeechNote = PartOfSpeechEnum[word.partOfSpeech]
-    }
   }
 
   /**

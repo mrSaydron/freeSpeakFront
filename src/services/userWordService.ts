@@ -10,6 +10,7 @@ export default class UserWordService {
       axios
         .get(baseApiUrl + UserWordService.requestQuery())
         .then(res => {
+          res.data.forEach((item: UserWordDto) => UserWordDto.fill(item))
           resolve(res.data)
         })
         .catch(err => {

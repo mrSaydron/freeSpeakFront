@@ -1,5 +1,46 @@
 <template>
-    <h1>Мой словарь</h1>
+  <v-container>
+<!--    <v-text-field-->
+<!--      v-model="searchString"-->
+<!--      label="Слово или перевод"-->
+<!--      clearable-->
+<!--      prepend-inner-icon="mdi-magnify"-->
+<!--    ></v-text-field>-->
+<!--    <v-data-table-->
+<!--      :headers="headers"-->
+<!--      :items="words"-->
+<!--      :items-per-page="Number.MAX_VALUE"-->
+<!--      hide-default-footer-->
+<!--      @update:sort-by="updateSortBy"-->
+<!--      @update:sort-desc="updateSortDesc"-->
+<!--      :server-items-length="words.length"-->
+<!--      :sort-by.sync="sortBy"-->
+<!--      :sort-desc.sync="sortDesc"-->
+<!--    >-->
+    <v-data-table
+      :headers="headers"
+      :items="words"
+      :items-per-page="Number.MAX_VALUE"
+      hide-default-footer
+    >
+<!--      <template v-slot:item.action="{ item }">-->
+<!--        <v-icon-->
+<!--          v-if="!item.userHas"-->
+<!--          class="mr-2"-->
+<!--          @click="addWord(item)"-->
+<!--        >-->
+<!--          mdi-plus-->
+<!--        </v-icon>-->
+<!--        <v-icon-->
+<!--          v-else-->
+<!--          @click="removeWord(item)"-->
+<!--        >-->
+<!--          mdi-close-->
+<!--        </v-icon>-->
+<!--      </template>-->
+    </v-data-table>
+<!--    <div v-intersect="next"></div>-->
+  </v-container>
 </template>
 
 <script lang="ts">
@@ -25,29 +66,29 @@ export default class MyDictionary extends Vue {
   // public searchString = ''
   // public wordSort?: SortValue<string | undefined> = new SortValue(undefined, asc)
   // public amountSort?: SortValue<number | undefined>
-  //
-  // public headers = [
-  //   {
-  //     text: 'Слово',
-  //     value: 'word',
-  //     sortable: true
-  //   },
-  //   {
-  //     text: 'Перевод',
-  //     value: 'translate',
-  //     sortable: false
-  //   },
-  //   {
-  //     text: 'Часть речи',
-  //     value: 'partOfSpeechNote',
-  //     sortable: false
-  //   },
-  //   {
-  //     text: 'Частота',
-  //     value: 'frequencyPercent',
-  //     sortable: true
-  //   }
-  // ]
+
+  public headers = [
+    {
+      text: 'Слово',
+      value: 'word.word',
+      sortable: true
+    },
+    {
+      text: 'Перевод',
+      value: 'word.translate',
+      sortable: false
+    },
+    {
+      text: 'Часть речи',
+      value: 'word.partOfSpeechNote',
+      sortable: false
+    },
+    {
+      text: 'Коробка',
+      value: 'averageBox',
+      sortable: true
+    }
+  ]
 
   public async mounted () {
     this.words = await this.retrieve()
