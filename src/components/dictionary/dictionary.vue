@@ -10,7 +10,7 @@ import { SortDirection } from '@/model/enums/sortDirection'
     <v-data-table
       :headers="headers"
       :items="words"
-      :items-per-page="Number.MAX_VALUE"
+      :disable-pagination="true"
       hide-default-footer
       @update:sort-by="updateSortBy"
       @update:sort-desc="updateSortDesc"
@@ -45,7 +45,6 @@ import { Inject, Vue, Watch } from 'vue-property-decorator'
 import WordService from '@/services/wordService'
 import { WordDto } from '@/model/wordDto'
 import { asc, desc, SortValue } from '@/model/sortValue'
-import { PartOfSpeechEnum } from '@/model/enums/partOfSpeechEnum'
 import UserWordService from '@/services/userWordService'
 
 @Component({

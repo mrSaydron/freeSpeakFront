@@ -14,7 +14,8 @@ export class UserWordDto implements UserWord {
     public priority?: number,
     public word?: WordDto,
     public wordProgresses?: WordProgressDto[],
-    public averageBox?: number
+    public averageBox?: number,
+    public selected?: boolean
   ) {
     console.log('UserWordDto')
   }

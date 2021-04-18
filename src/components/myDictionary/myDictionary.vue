@@ -1,45 +1,56 @@
 <template>
   <v-container>
-<!--    <v-text-field-->
-<!--      v-model="searchString"-->
-<!--      label="Слово или перевод"-->
-<!--      clearable-->
-<!--      prepend-inner-icon="mdi-magnify"-->
-<!--    ></v-text-field>-->
-<!--    <v-data-table-->
-<!--      :headers="headers"-->
-<!--      :items="words"-->
-<!--      :items-per-page="Number.MAX_VALUE"-->
-<!--      hide-default-footer-->
-<!--      @update:sort-by="updateSortBy"-->
-<!--      @update:sort-desc="updateSortDesc"-->
-<!--      :server-items-length="words.length"-->
-<!--      :sort-by.sync="sortBy"-->
-<!--      :sort-desc.sync="sortDesc"-->
-<!--    >-->
+    <v-text-field
+      v-model="searchString"
+      label="Слово или перевод"
+      clearable
+      prepend-inner-icon="mdi-magnify"
+    ></v-text-field>
     <v-data-table
       :headers="headers"
       :items="words"
-      :items-per-page="Number.MAX_VALUE"
+      :disable-pagination="true"
       hide-default-footer
+      @update:sort-by="updateSortBy"
+      @update:sort-desc="updateSortDesc"
+      :server-items-length="words.length"
+      :sort-by.sync="sortBy"
+      :sort-desc.sync="sortDesc"
+
+      show-select
+      :single-select="false"
+      v-model="selectWords"
     >
-<!--      <template v-slot:item.action="{ item }">-->
-<!--        <v-icon-->
-<!--          v-if="!item.userHas"-->
-<!--          class="mr-2"-->
-<!--          @click="addWord(item)"-->
-<!--        >-->
-<!--          mdi-plus-->
-<!--        </v-icon>-->
-<!--        <v-icon-->
-<!--          v-else-->
-<!--          @click="removeWord(item)"-->
-<!--        >-->
-<!--          mdi-close-->
-<!--        </v-icon>-->
-<!--      </template>-->
+      <template v-slot:header.erase>
+        <v-icon @click="eraserSelectWords()">
+          mdi-eraser
+        </v-icon>
+      </template>
+      <template v-slot:item.erase="{ item }">
+        <v-icon @click="eraserWord(item)">
+          mdi-eraser
+        </v-icon>
+      </template>
+
+      <template v-slot:header.remove>
+        <v-icon @click="removeSelectWords()">
+          mdi-close
+        </v-icon>
+      </template>
+      <template v-slot:item.remove="{ item }">
+        <v-icon @click="removeWord(item)">
+          mdi-close
+        </v-icon>
+      </template>
+
+      <template v-slot:header.learn>
+        <v-icon @click="learnSelectWords()">
+          mdi-school
+        </v-icon>
+      </template>
+
     </v-data-table>
-<!--    <div v-intersect="next"></div>-->
+    <div v-intersect="next"></div>
   </v-container>
 </template>
 
@@ -48,6 +59,9 @@ import Component from 'vue-class-component'
 import { Inject, Vue, Watch } from 'vue-property-decorator'
 import UserWordService from '@/services/userWordService'
 import { UserWordDto } from '@/model/userWordDto'
+import { asc, desc, SortValue } from '@/model/sortValue'
+import { WordDto } from '@/model/wordDto'
+import loginForm from '@/components/account/loginForm.vue'
 
 @Component({
   components: {}
@@ -58,14 +72,15 @@ export default class MyDictionary extends Vue {
   public requestCount = 20
   public allElements = false
   public words: UserWordDto[] = []
+  public selectWords: UserWordDto[] = []
+  public selectAll = false
 
-  // public loading = false
-  // public sortBy: string[] = ['word']
-  // public sortDesc: boolean[] = [false]
-  //
-  // public searchString = ''
-  // public wordSort?: SortValue<string | undefined> = new SortValue(undefined, asc)
-  // public amountSort?: SortValue<number | undefined>
+  public sortBy: string[] = ['word']
+  public sortDesc: boolean[] = [false]
+
+  public searchString = ''
+  public wordSort?: SortValue<string | undefined> = new SortValue(undefined, asc)
+  public startPriority?: SortValue<number | undefined>
 
   public headers = [
     {
@@ -84,9 +99,32 @@ export default class MyDictionary extends Vue {
       sortable: false
     },
     {
+      text: 'Приоритет',
+      value: 'word.priority',
+      sortable: true
+    },
+    {
       text: 'Коробка',
       value: 'averageBox',
-      sortable: true
+      sortable: false
+    },
+    {
+      text: '',
+      value: 'erase',
+      sortable: false,
+      width: 20
+    },
+    {
+      text: '',
+      value: 'remove',
+      sortable: false,
+      width: 20
+    },
+    {
+      text: '',
+      value: 'learn',
+      sortable: false,
+      width: 20
     }
   ]
 
@@ -94,71 +132,148 @@ export default class MyDictionary extends Vue {
     this.words = await this.retrieve()
   }
 
-  // @Watch('searchString')
-  // public async searchChange (wordFilter: string, oldWordFilter: string) {
-  //   this.loading = true
-  //   if (this.wordSort) {
-  //     this.wordSort.maxValue = undefined
-  //   }
-  //   if (this.amountSort) {
-  //     this.amountSort.maxValue = undefined
-  //   }
-  //   this.words = await this.retrieve()
-  //   this.loading = false
-  // }
-  //
-  // public async next () {
-  //   if (!this.allElements && this.words.length > 0) {
-  //     const wordDto: WordDto = this.words[this.words.length - 1]
-  //     if (this.wordSort) {
-  //       this.wordSort.maxValue = wordDto.word
-  //     }
-  //     if (this.amountSort) {
-  //       this.amountSort.maxValue = wordDto.totalAmount
-  //     }
-  //     const nextWords = await this.retrieve()
-  //     this.words = this.words.concat(nextWords)
-  //   }
-  // }
-  //
-  // public async updateSortBy (value: string[]): Promise<void> {
-  //   const item = value[0]
-  //   if (item === 'word') {
-  //     this.wordSort = new SortValue(undefined, asc)
-  //     this.amountSort = undefined
-  //   } else if (item === 'frequencyPercent') {
-  //     this.wordSort = undefined
-  //     this.amountSort = new SortValue(undefined, asc)
-  //   }
-  //
-  //   this.words = await this.retrieve()
-  // }
-  //
-  // public async updateSortDesc (value: boolean[]): Promise<void> {
-  //   const direction = value[0]
-  //   if (this.wordSort) {
-  //     this.wordSort.sortDirection = direction ? desc : asc
-  //   }
-  //   if (this.amountSort) {
-  //     this.amountSort.sortDirection = direction ? desc : asc
-  //   }
-  //
-  //   this.words = await this.retrieve()
-  // }
+  @Watch('searchString')
+  public async searchChange (wordFilter: string, oldWordFilter: string) {
+    if (this.wordSort) {
+      this.wordSort.maxValue = undefined
+    }
+    if (this.startPriority) {
+      this.startPriority.maxValue = undefined
+    }
+    this.words = await this.retrieve()
+  }
+
+  /**
+   * Загружает следующую страницу (пагинация)
+   */
+  public async next () {
+    if (!this.allElements && this.words.length > 0) {
+      const wordDto: UserWordDto = this.words[this.words.length - 1]
+      if (this.wordSort) {
+        this.wordSort.maxValue = wordDto.word?.word
+      }
+      if (this.startPriority) {
+        this.startPriority.maxValue = wordDto.priority
+      }
+      const nextWords = await this.retrieve()
+      this.words = this.words.concat(nextWords)
+
+      if (this.selectWords) {
+        this.selectWords = this.selectWords.concat(nextWords)
+      }
+    }
+  }
+
+  public async updateSortBy (value: string[]): Promise<void> {
+    const item = value[0]
+    if (item === 'word.word') {
+      this.wordSort = new SortValue(undefined, asc)
+      this.startPriority = undefined
+    } else if (item === 'word.priority') {
+      this.wordSort = undefined
+      this.startPriority = new SortValue(undefined, asc)
+    }
+
+    this.words = await this.retrieve()
+  }
+
+  public async updateSortDesc (value: boolean[]): Promise<void> {
+    const direction = value[0]
+    if (this.wordSort) {
+      this.wordSort.sortDirection = direction ? desc : asc
+    }
+    if (this.startPriority) {
+      this.startPriority.sortDirection = direction ? desc : asc
+    }
+
+    this.words = await this.retrieve()
+  }
 
   private async retrieve (): Promise<UserWordDto[]> {
-    const words = await this.userWordService.retrieve()
+    const words = await this.userWordService.retrieve(
+      this.searchString,
+      undefined,
+      this.wordSort,
+      this.startPriority,
+      this.requestCount
+    )
     this.allElements = words.length < this.requestCount
     return words
   }
 
-  // private static fillWord (word: WordDto) {
-  //   if (word.frequency) {
-  //     word.frequencyPercent = (word.frequency * 100).toFixed(2) + ' %'
-  //   }
-  //   if (word.partOfSpeech) {
-  //     word.partOfSpeechNote = PartOfSpeechEnum[word.partOfSpeech]
-  //   }
-  // }
+  /**
+   * Сбрасывает прогресс слова
+   */
+  public eraserWord (word: UserWordDto): void {
+    if (word.wordProgresses) {
+      word.wordProgresses.forEach((progress) => { progress.boxNumber = 0 })
+    }
+    if (word.id) {
+      this.userWordService.eraseWord(word.id)
+    }
+  }
+
+  /**
+   * Удаление слова из словаря пользователя
+   */
+  public removeWord (word: UserWordDto): void {
+    this.words = this.words.filter(item => item.id !== word.id)
+    if (word.word && word.word.id) {
+      this.userWordService.removeWord(word.word.id)
+    }
+  }
+
+  /**
+   * Сбрасывает прогресс выделенных слов
+   */
+  public eraserSelectWords (): void {
+    if (this.selectWords) {
+      this.selectWords.forEach(word => {
+        if (word.wordProgresses) {
+          word.wordProgresses.forEach(progress => { progress.boxNumber = 0 })
+        }
+      })
+    }
+    if (this.selectAll) {
+      this.userWordService.eraseAllWords(
+        this.searchString,
+        undefined
+      )
+    } else {
+      if (this.selectWords) {
+        this.userWordService.eraseWords(this.selectWords.map(word => word.id))
+      }
+    }
+  }
+
+  /**
+   * Удаление выделенных слов из словаря пользователя
+   */
+  public removeSelectWords (): void {
+    if (this.selectAll) {
+      this.userWordService.removeAllWords(
+        this.searchString,
+        undefined
+      )
+      this.words = []
+    } else {
+      if (this.words && this.selectWords) {
+        this.userWordService.removeWords(this.selectWords.map(word => word.word!.id))
+        this.words = this.words.filter(word => !this.selectWords!.some(wordComp => word.id === wordComp.id))
+      }
+    }
+  }
+
+  /**
+   * Свободное изучение выделенных слов
+   */
+  public learnSelectWords (): void {
+    console.log(this.selectWords)
+  }
+
+  @Watch('selectWords')
+  public async selectWordsChange (selectWords: UserWordDto[], oldSelectWords: UserWordDto[]) {
+    this.selectAll = selectWords.length === this.words.length
+  }
 }
 </script>

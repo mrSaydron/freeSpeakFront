@@ -1,13 +1,12 @@
 import axios from 'axios'
 import { WordDto } from '@/model/wordDto.ts'
 import { SortValue } from '@/model/sortValue'
-import { PartOfSpeechEnum } from '@/model/enums/partOfSpeechEnum'
-
-// import buildPaginationQueryOpts from '@/shared/sort/sorts';
 
 const baseApiUrl = '/api/word'
 
 export default class WordService {
+  private static REQUEST_COUNT_DEFAULT = 10;
+
   public find (id: number): Promise<WordDto> {
     return new Promise<WordDto>((resolve, reject) => {
       axios
@@ -53,7 +52,7 @@ export default class WordService {
     amountSort?: SortValue<number | undefined>,
     requestCount?: number
   ): string {
-    let result = `?size=${requestCount || 8}`
+    let result = `?size=${requestCount || WordService.REQUEST_COUNT_DEFAULT}`
 
     if (wordFilter) {
       result += `&wordFilter.contains=${wordFilter}`
