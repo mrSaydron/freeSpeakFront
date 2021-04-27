@@ -7,7 +7,7 @@ export interface WordProgress {
 
 export class WordProgressDto implements WordProgress {
   constructor(
-    public id?: number,
+    public id: number,
     public boxNumber?: number,
     public successfulAttempts?: number,
     public type?: string

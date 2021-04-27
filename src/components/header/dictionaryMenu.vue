@@ -12,7 +12,7 @@
     </template>
 
     <v-list>
-      <v-list-item link>
+      <v-list-item to="/cards-learn">
         <v-list-item-title>КАРТОЧКИ</v-list-item-title>
       </v-list-item>
       <v-list-item to="/my-dictionary">

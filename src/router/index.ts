@@ -11,6 +11,7 @@ import Book from '@/components/book/book.vue'
 import MyBooks from '@/components/myBooks/myBooks.vue'
 import Dictionary from '@/components/dictionary/dictionary.vue'
 import MyDictionary from '@/components/myDictionary/myDictionary.vue'
+import CardsLearn from '@/components/cardsLearn/cardsLearn.vue'
 
 Vue.use(VueRouter)
 
@@ -75,6 +76,15 @@ const routes: Array<RouteConfig> = [
     path: '/my-dictionary',
     name: 'MyDictionary',
     component: MyDictionary,
+    meta: {
+      authorities: [Authority.USER],
+      backPage: '/'
+    }
+  },
+  {
+    path: '/cards-learn',
+    name: 'CardsLearn',
+    component: CardsLearn,
     meta: {
       authorities: [Authority.USER],
       backPage: '/'

@@ -10,6 +10,7 @@ export default class UserWordService {
   public async retrieve (
     wordFilter?: string,
     partOfSpeechFilter?: string,
+    boxNumberFilter?: number,
     wordSort?: SortValue<string | undefined>,
     startPriority?: SortValue<number | undefined>,
     requestCount?: number
@@ -19,6 +20,7 @@ export default class UserWordService {
     UserWordService.fillRequestQuery(
       params,
       wordFilter,
+      boxNumberFilter,
       partOfSpeechFilter,
       wordSort,
       startPriority)
@@ -39,6 +41,7 @@ export default class UserWordService {
   private static fillRequestQuery (
     params: URLSearchParams,
     wordFilter?: string,
+    boxNumberFilter?: number,
     partOfSpeechFilter?: string,
     wordSort?: SortValue<string | undefined>,
     startPriority?: SortValue<number | undefined>
@@ -49,13 +52,16 @@ export default class UserWordService {
     if (partOfSpeechFilter) {
       params.append('partOfSpeechFilter.contains', partOfSpeechFilter)
     }
-    if (wordSort && wordSort.sortDirection) {
+    if (boxNumberFilter !== undefined) {
+      params.append('boxNumber.equals', boxNumberFilter + '')
+    }
+    if (wordSort && wordSort.maxValue && wordSort.sortDirection) {
       params.append('sort', `word,${wordSort.sortDirection.direction}`)
       if (wordSort.maxValue) {
         params.append(`startWord.${wordSort.sortDirection.compare}`, wordSort.maxValue)
       }
     }
-    if (startPriority && startPriority.sortDirection) {
+    if (startPriority && startPriority.maxValue && startPriority.sortDirection) {
       params.append('sort', `priority,${startPriority.sortDirection.direction}`)
       if (startPriority.maxValue) {
         params.append(`startPriority.${startPriority.sortDirection.compare}`, `${startPriority.maxValue}`)
@@ -110,6 +116,7 @@ export default class UserWordService {
     UserWordService.fillRequestQuery(
       params,
       wordFilter,
+      undefined,
       partOfSpeechFilter
     )
     return new Promise<any>((resolve, reject) => {
@@ -155,10 +162,67 @@ export default class UserWordService {
     UserWordService.fillRequestQuery(
       params,
       wordFilter,
+      undefined,
       partOfSpeechFilter
     )
     return new Promise<any>((resolve, reject) => {
       axios.put(`${baseApiUrl}/remove-all-words?${params.toString()}`)
+        .catch(err => {
+          reject(err)
+        })
+    })
+  }
+
+  /**
+   * Возвращает доступные для пользователя попытки ответов (сердца/жизни)
+   */
+  public async getLeftHearts (): Promise<number> {
+    return new Promise<number>((resolve, reject) => {
+      axios.get(`${baseApiUrl}/left-hearts`)
+        .then(res => {
+          resolve(res.data)
+        })
+        .catch(err => {
+          reject(err)
+        })
+    })
+  }
+
+  /**
+   * Возвращает слова для изучения на данный день
+   */
+  public async getWordOfDay (): Promise<UserWordDto[]> {
+    return new Promise<UserWordDto[]>((resolve, reject) => {
+      axios.get(`${baseApiUrl}/words-of-day`)
+        .then(res => {
+          res.data.forEach((item: UserWordDto) => UserWordDto.fill(item))
+          resolve(res.data)
+        })
+        .catch(err => {
+          reject(err)
+        })
+    })
+  }
+
+  /**
+   * Пользователь не верно ответил, прогресс сбрасывается
+   */
+  public async answerFail (progressId: number): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      axios.put(`${baseApiUrl}/answer-fail/${progressId}`)
+        .catch(err => {
+          reject(err)
+        })
+    })
+  }
+
+  /**
+   * Пользователь ответил верно, прогресс слова переходит в седующую коробку
+   * @param progressId
+   */
+  public async answerSuccess (progressId: number): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      axios.put(`${baseApiUrl}/answer-success/${progressId}`)
         .catch(err => {
           reject(err)
         })

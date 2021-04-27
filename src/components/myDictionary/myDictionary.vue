@@ -193,6 +193,7 @@ export default class MyDictionary extends Vue {
     const words = await this.userWordService.retrieve(
       this.searchString,
       undefined,
+      undefined,
       this.wordSort,
       this.startPriority,
       this.requestCount
