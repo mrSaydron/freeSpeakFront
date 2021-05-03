@@ -55,13 +55,13 @@ export default class UserWordService {
     if (boxNumberFilter !== undefined) {
       params.append('boxNumber.equals', boxNumberFilter + '')
     }
-    if (wordSort && wordSort.maxValue && wordSort.sortDirection) {
+    if (wordSort && wordSort.sortDirection) {
       params.append('sort', `word,${wordSort.sortDirection.direction}`)
       if (wordSort.maxValue) {
         params.append(`startWord.${wordSort.sortDirection.compare}`, wordSort.maxValue)
       }
     }
-    if (startPriority && startPriority.maxValue && startPriority.sortDirection) {
+    if (startPriority && startPriority.sortDirection) {
       params.append('sort', `priority,${startPriority.sortDirection.direction}`)
       if (startPriority.maxValue) {
         params.append(`startPriority.${startPriority.sortDirection.compare}`, `${startPriority.maxValue}`)

@@ -26,6 +26,8 @@ import { Inject, Vue, Watch } from 'vue-property-decorator'
 import BookCard from '@/components/common/bookCard.vue'
 import BookService from '@/services/bookService'
 import { BookDto } from '@/model/bookDto'
+import { BookFilter } from '@/services/filters/bookFilter'
+import { SortValue, asc, desc } from '@/model/sortValue'
 
 @Component({
   components: {
@@ -39,9 +41,16 @@ export default class Library extends Vue {
   public allElements = false
   public searchString = ''
   public books: BookDto[] = []
+  public bookFilter = new BookFilter(
+    undefined,
+    true,
+    new SortValue<string>(undefined, asc),
+    undefined,
+    this.requestCount
+  )
 
   public async mounted () {
-    this.books = await this.bookService.retrieve(undefined, true, undefined, this.requestCount)
+    this.books = await this.bookService.retrieve(this.bookFilter)
     if (this.books.length < this.requestCount) {
       this.allElements = true
     }
@@ -50,21 +59,23 @@ export default class Library extends Vue {
   @Watch('searchString')
   public async searchChange (common: string, oldCommon: string) {
     if (common && common !== '' && common.length >= 3) {
-      this.books = await this.bookService.retrieve(common, true, undefined, this.requestCount)
+      this.bookFilter.titleAuthorFilter = common
+      this.books = await this.bookService.retrieve(this.bookFilter)
       this.allElements = this.books.length < this.requestCount
     } else if (oldCommon && oldCommon !== '' && oldCommon.length >= 3) {
-      this.books = await this.bookService.retrieve(undefined, true, undefined, this.requestCount)
+      this.bookFilter.titleAuthorFilter = undefined
+      this.books = await this.bookService.retrieve(this.bookFilter)
       this.allElements = this.books.length < this.requestCount
     }
   }
 
   public async next () {
     if (!this.allElements && this.books.length > 0) {
-      console.log('next')
-      const ids: number[] = this.books
-        .map(book => Number(book.id))
-      const maxId = Math.max.apply(null, ids)
-      const nextBooks = await this.bookService.retrieve(this.searchString, true, maxId, this.requestCount)
+      const lastBook = this.books[this.books.length - 1]
+      if (this.bookFilter.titleSort) {
+        this.bookFilter.titleSort.maxValue = lastBook.title
+      }
+      const nextBooks = await this.bookService.retrieve(this.bookFilter)
       nextBooks.forEach(book => this.books.push(book))
       if (nextBooks.length < this.requestCount) {
         this.allElements = true

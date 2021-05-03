@@ -3,10 +3,18 @@ import axios from 'axios'
 // import buildPaginationQueryOpts from '@/shared/sort/sorts';
 
 import { BookDto } from '@/model/bookDto.ts'
+import { SortValue } from '@/model/sortValue'
+import { BookFilter } from '@/services/filters/bookFilter'
 
 const baseApiUrl = '/api/book'
 
 export default class BookService {
+  private static REQUEST_COUNT_DEFAULT = 8
+
+  /**
+   * Возвращает книгу по ее идентификатору
+   * @param id
+   */
   public find (id: number): Promise<BookDto> {
     return new Promise<BookDto>((resolve, reject) => {
       axios
@@ -20,13 +28,16 @@ export default class BookService {
     })
   }
 
-  public async retrieve (titleAuthor?: string,
-                         orPublicBook?: boolean,
-                         startId?: number,
-                         requestCount?: number): Promise<BookDto[]> {
+  /**
+   * Возвращает список книг по запросу
+   */
+  public async retrieve (bookFilter: BookFilter): Promise<BookDto[]> {
+    const params = new URLSearchParams()
+    params.append('size', '' + (bookFilter.requestCount || BookService.REQUEST_COUNT_DEFAULT))
+    BookService.fillRequestQuery(params, bookFilter)
     return new Promise<BookDto[]>((resolve, reject) => {
       axios
-        .get(baseApiUrl + BookService.requestQuery(titleAuthor, orPublicBook, startId, requestCount))
+        .get(`${baseApiUrl}?${params.toString()}`)
         .then(res => {
           resolve(res.data)
         })
@@ -36,23 +47,33 @@ export default class BookService {
     })
   }
 
-  private static requestQuery (titleAuthor?: string,
-                               orPublicBook?: boolean,
-                               startId?: number,
-                               requestCount?: number): string {
-    let result = `?sort=id,asc&size=${requestCount || 8}`
-
-    if (titleAuthor) {
-      result += `&titleAuthor.contains=${titleAuthor}`
+  /**
+   * Формирует запрос с сортировкой и фильтрами
+   * @param params
+   * @param bookFilter
+   * @private
+   */
+  private static fillRequestQuery (params: URLSearchParams, bookFilter: BookFilter): void {
+    if (bookFilter.titleAuthorFilter) {
+      params.append('titleAuthor.contains', bookFilter.titleAuthorFilter)
     }
-    if (startId) {
-      result += `&id.greaterThan=${startId}`
-    }
-    if (orPublicBook) {
-      result += `&orPublicBook.equals=${orPublicBook}`
+    if (bookFilter.orPublicBookFilter) {
+      params.append('orPublicBook.equals', bookFilter.orPublicBookFilter + '')
     }
 
-    return result
+    // sorts
+    if (bookFilter.titleSort && bookFilter.titleSort.sortDirection) {
+      params.append('sort', `title,${bookFilter.titleSort.sortDirection.direction}`)
+      if (bookFilter.titleSort.maxValue) {
+        params.append(`title.${bookFilter.titleSort.sortDirection.compare}`, `${bookFilter.titleSort.maxValue}`)
+      }
+    }
+    if (bookFilter.knowSort && bookFilter.knowSort.sortDirection) {
+      params.append('sort', `book.know,${bookFilter.knowSort.sortDirection.direction}`)
+      if (bookFilter.knowSort.maxValue) {
+        params.append(`know.${bookFilter.knowSort.sortDirection.compare}`, `${bookFilter.knowSort.maxValue}`)
+      }
+    }
   }
 
   public delete (id: number): Promise<any> {
