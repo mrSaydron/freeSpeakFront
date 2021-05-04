@@ -128,6 +128,52 @@ export default class UserWordService {
   }
 
   /**
+   * Отмечает слово выученным
+   */
+  public async knowWord (wordId: number): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
+      axios.put(`${baseApiUrl}/know-word/${wordId}`)
+        .catch(err => {
+          reject(err)
+        })
+    })
+  }
+
+  /**
+   * Отмечает слова выученными
+   */
+  public async knowWords (wordIds: (number | undefined)[]): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
+      axios.put(`${baseApiUrl}/know-words`, wordIds)
+        .catch(err => {
+          reject(err)
+        })
+    })
+  }
+
+  /**
+   * Отмечает слова выученнми по условию
+   */
+  public async knowAllWords (
+    wordFilter?: string,
+    partOfSpeechFilter?: string
+  ): Promise<any> {
+    const params = new URLSearchParams()
+    UserWordService.fillRequestQuery(
+      params,
+      wordFilter,
+      undefined,
+      partOfSpeechFilter
+    )
+    return new Promise<any>((resolve, reject) => {
+      axios.put(`${baseApiUrl}/know-all-words?${params.toString()}`)
+        .catch(err => {
+          reject(err)
+        })
+    })
+  }
+
+  /**
    * Удаление слова из словаря пользователя
    */
   public async removeWord (wordId: number): Promise<any> {

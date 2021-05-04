@@ -43,6 +43,17 @@
         </v-icon>
       </template>
 
+      <template v-slot:header.know>
+        <v-icon @click="knowSelectWords()">
+          mdi-head-lightbulb
+        </v-icon>
+      </template>
+      <template v-slot:item.know="{ item }">
+        <v-icon @click="knowWord(item)">
+          mdi-head-lightbulb
+        </v-icon>
+      </template>
+
       <template v-slot:header.learn>
         <v-icon @click="learnSelectWords()">
           mdi-school
@@ -60,8 +71,6 @@ import { Inject, Vue, Watch } from 'vue-property-decorator'
 import UserWordService from '@/services/userWordService'
 import { UserWordDto } from '@/model/userWordDto'
 import { asc, desc, SortValue } from '@/model/sortValue'
-import { WordDto } from '@/model/wordDto'
-import loginForm from '@/components/account/loginForm.vue'
 
 @Component({
   components: {}
@@ -117,6 +126,12 @@ export default class MyDictionary extends Vue {
     {
       text: '',
       value: 'remove',
+      sortable: false,
+      width: 20
+    },
+    {
+      text: '',
+      value: 'know',
       sortable: false,
       width: 20
     },
@@ -207,20 +222,11 @@ export default class MyDictionary extends Vue {
    */
   public eraserWord (word: UserWordDto): void {
     if (word.wordProgresses) {
+      word.averageBox = 0
       word.wordProgresses.forEach((progress) => { progress.boxNumber = 0 })
     }
-    if (word.id) {
-      this.userWordService.eraseWord(word.id)
-    }
-  }
-
-  /**
-   * Удаление слова из словаря пользователя
-   */
-  public removeWord (word: UserWordDto): void {
-    this.words = this.words.filter(item => item.id !== word.id)
     if (word.word && word.word.id) {
-      this.userWordService.removeWord(word.word.id)
+      this.userWordService.eraseWord(word.word.id)
     }
   }
 
@@ -231,6 +237,7 @@ export default class MyDictionary extends Vue {
     if (this.selectWords) {
       this.selectWords.forEach(word => {
         if (word.wordProgresses) {
+          word.averageBox = 0
           word.wordProgresses.forEach(progress => { progress.boxNumber = 0 })
         }
       })
@@ -242,8 +249,18 @@ export default class MyDictionary extends Vue {
       )
     } else {
       if (this.selectWords) {
-        this.userWordService.eraseWords(this.selectWords.map(word => word.id))
+        this.userWordService.eraseWords(this.selectWords.map(word => word.word!.id))
       }
+    }
+  }
+
+  /**
+   * Удаление слова из словаря пользователя
+   */
+  public removeWord (word: UserWordDto): void {
+    this.words = this.words.filter(item => item.id !== word.id)
+    if (word.word && word.word.id) {
+      this.userWordService.removeWord(word.word.id)
     }
   }
 
@@ -261,6 +278,43 @@ export default class MyDictionary extends Vue {
       if (this.words && this.selectWords) {
         this.userWordService.removeWords(this.selectWords.map(word => word.word!.id))
         this.words = this.words.filter(word => !this.selectWords!.some(wordComp => word.id === wordComp.id))
+      }
+    }
+  }
+
+  /**
+   * Отмечает слово выученным
+   */
+  public knowWord (word: UserWordDto): void {
+    if (word.wordProgresses) {
+      word.averageBox = 7
+      word.wordProgresses.forEach((progress) => { progress.boxNumber = 7 }) // todo заменить на enum
+    }
+    if (word.word && word.word.id) {
+      this.userWordService.knowWord(word.word.id)
+    }
+  }
+
+  /**
+   * Отмечает выделенные слова выученными
+   */
+  public knowSelectWords (): void {
+    if (this.selectWords) {
+      this.selectWords.forEach(word => {
+        if (word.wordProgresses) {
+          word.averageBox = 7
+          word.wordProgresses.forEach(progress => { progress.boxNumber = 7 })
+        }
+      })
+    }
+    if (this.selectAll) {
+      this.userWordService.knowAllWords(
+        this.searchString,
+        undefined
+      )
+    } else {
+      if (this.selectWords) {
+        this.userWordService.knowWords(this.selectWords.map(word => word.word!.id))
       }
     }
   }
