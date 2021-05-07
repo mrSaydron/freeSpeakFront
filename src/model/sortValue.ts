@@ -8,7 +8,7 @@ export class SortValue<T> {
   }
 }
 
-class SortDirection {
+export class SortDirection {
   constructor (
     public direction: string,
     public compare: string

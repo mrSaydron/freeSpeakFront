@@ -23,7 +23,7 @@
 import Component from 'vue-class-component'
 import { Inject, Vue, Watch } from 'vue-property-decorator'
 
-import BookCard from '@/components/common/bookCard.vue'
+import BookCard from '@/common/bookCard.vue'
 import BookService from '@/services/bookService'
 import { BookDto } from '@/model/bookDto'
 import { BookFilter } from '@/services/filters/bookFilter'

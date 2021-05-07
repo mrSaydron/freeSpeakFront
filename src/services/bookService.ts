@@ -3,7 +3,6 @@ import axios from 'axios'
 // import buildPaginationQueryOpts from '@/shared/sort/sorts';
 
 import { BookDto } from '@/model/bookDto.ts'
-import { SortValue } from '@/model/sortValue'
 import { BookFilter } from '@/services/filters/bookFilter'
 
 const baseApiUrl = '/api/book'
@@ -55,23 +54,35 @@ export default class BookService {
    */
   private static fillRequestQuery (params: URLSearchParams, bookFilter: BookFilter): void {
     if (bookFilter.titleAuthorFilter) {
-      params.append('titleAuthor.contains', bookFilter.titleAuthorFilter)
+      params.append('titleAuthorFilter.contains', bookFilter.titleAuthorFilter)
     }
     if (bookFilter.orPublicBookFilter) {
-      params.append('orPublicBook.equals', bookFilter.orPublicBookFilter + '')
+      params.append('orPublicBookFilter.equals', bookFilter.orPublicBookFilter + '')
+    }
+    if (bookFilter.know100Filter) {
+      params.append('know100Filter.equals', bookFilter.know100Filter + '')
+    }
+    if (bookFilter.know90Filter) {
+      params.append('know90Filter.equals', bookFilter.know90Filter + '')
+    }
+    if (bookFilter.know50Filter) {
+      params.append('know50Filter.equals', bookFilter.know50Filter + '')
+    }
+    if (bookFilter.know0Filter) {
+      params.append('know0Filter.equals', bookFilter.know0Filter + '')
     }
 
     // sorts
     if (bookFilter.titleSort && bookFilter.titleSort.sortDirection) {
       params.append('sort', `title,${bookFilter.titleSort.sortDirection.direction}`)
       if (bookFilter.titleSort.maxValue) {
-        params.append(`title.${bookFilter.titleSort.sortDirection.compare}`, `${bookFilter.titleSort.maxValue}`)
+        params.append(`startTitle.${bookFilter.titleSort.sortDirection.compare}`, `${bookFilter.titleSort.maxValue}`)
       }
     }
-    if (bookFilter.knowSort && bookFilter.knowSort.sortDirection) {
-      params.append('sort', `book.know,${bookFilter.knowSort.sortDirection.direction}`)
-      if (bookFilter.knowSort.maxValue) {
-        params.append(`know.${bookFilter.knowSort.sortDirection.compare}`, `${bookFilter.knowSort.maxValue}`)
+    if (bookFilter.authorSort && bookFilter.authorSort.sortDirection) {
+      params.append('sort', `author,${bookFilter.authorSort.sortDirection.direction}`)
+      if (bookFilter.authorSort.maxValue) {
+        params.append(`startAuthor.${bookFilter.authorSort.sortDirection.compare}`, `${bookFilter.authorSort.maxValue}`)
       }
     }
   }

@@ -37,7 +37,7 @@
 <script lang="ts">
 import Component from 'vue-class-component'
 import { Inject, Vue } from 'vue-property-decorator'
-import WordCardDirect from '@/components/common/wordCard/wordCardDirect.vue'
+import WordCardDirect from '@/common/wordCard/wordCardDirect.vue'
 import { WordDto } from '@/model/wordDto'
 import UserWordService from '@/services/userWordService'
 import { UserWordDto } from '@/model/userWordDto'
