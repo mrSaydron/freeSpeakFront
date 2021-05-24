@@ -44,6 +44,10 @@ export default class MyBooks extends Vue {
   public bookFilter = new BookFilter(
     undefined,
     false,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
     new SortValue<string>(undefined, asc),
     undefined,
     this.requestCount

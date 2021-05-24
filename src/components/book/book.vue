@@ -1,8 +1,8 @@
 <template>
   <div>
     <v-parallax
-      height="300"
-      src="http://hq-oboi.ru/photo/kotik_kak_pushistyy_komochek_1920x1200.jpg"
+      height="350"
+      :src="book.pictureUrl"
     >
       <v-row>
         <v-col
@@ -38,6 +38,8 @@ import BookText from '@/components/book/bookText.vue'
 import BookDictionary from '@/components/book/bookDictionary.vue'
 import { DictionaryDto } from '@/model/dictionaryDto'
 import BookDictionaryService from '@/services/bookDictionaryService'
+import FileService from '@/services/fileService'
+import { DefaultNamesEnum } from '@/model/enums/defaultNamesEnum'
 
 @Component({
   components: {
@@ -50,6 +52,7 @@ export default class Book extends Vue {
 
   @Inject() readonly bookService!: BookService
   @Inject() readonly dictionaryService!: BookDictionaryService
+  @Inject() readonly fileService!: FileService
 
   public book: BookDto = {}
   public dictionary: DictionaryDto = {}
@@ -60,6 +63,9 @@ export default class Book extends Vue {
       const id = Number(this.id)
       this.bookService.sendOpenBook(id).catch(err => console.log(err))
       this.book = await this.bookService.find(Number(id))
+      const name = this.book.pictureName ? this.book.pictureName : DefaultNamesEnum.book
+      this.fileService.getUrl(name)
+        .then(res => { this.book.pictureUrl = res })
       if (this.book && this.book.dictionaryId) {
         this.dictionary = await this.dictionaryService.find(this.book.dictionaryId)
       }

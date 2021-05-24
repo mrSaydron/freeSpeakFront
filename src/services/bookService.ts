@@ -19,6 +19,7 @@ export default class BookService {
       axios
         .get(`${baseApiUrl}/${id}`)
         .then(res => {
+          res.data.pictureUrl = ''
           resolve(res.data)
         })
         .catch(err => {
@@ -38,6 +39,7 @@ export default class BookService {
       axios
         .get(`${baseApiUrl}?${params.toString()}`)
         .then(res => {
+          res.data.forEach((book: BookDto) => { book.pictureUrl = '' })
           resolve(res.data)
         })
         .catch(err => {

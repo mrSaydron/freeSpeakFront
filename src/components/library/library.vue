@@ -72,6 +72,8 @@ import { BookFilter } from '@/services/filters/bookFilter'
 import { SortValue, asc, desc, SortDirection } from '@/model/sortValue'
 import SortButton from '@/common/sortButton.vue'
 import SelectButton from '@/common/selectButton.vue'
+import FileService from '@/services/fileService'
+import { DefaultNamesEnum } from '@/model/enums/defaultNamesEnum'
 
 @Component({
   components: {
@@ -82,6 +84,7 @@ import SelectButton from '@/common/selectButton.vue'
 })
 export default class Library extends Vue {
   @Inject() readonly bookService!: BookService
+  @Inject() readonly fileService!: FileService
 
   public requestCount = 20
   public allElements = false
@@ -122,7 +125,15 @@ export default class Library extends Vue {
   }
 
   public async retrieve (): Promise<void> {
-    this.books = await this.bookService.retrieve(this.bookFilter)
+    const nextBooks = await this.bookService.retrieve(this.bookFilter)
+    nextBooks.forEach(book => {
+      const name = book.pictureName ? book.pictureName : DefaultNamesEnum.book
+      this.fileService.getUrl(name)
+        .then(res => {
+          book.pictureUrl = res
+        })
+    })
+    this.books = this.books.concat(nextBooks)
     this.allElements = this.books.length < this.requestCount
   }
 
@@ -135,11 +146,7 @@ export default class Library extends Vue {
       if (this.bookFilter.authorSort) {
         this.bookFilter.authorSort.maxValue = lastBook.author
       }
-      const nextBooks = await this.bookService.retrieve(this.bookFilter)
-      nextBooks.forEach(book => this.books.push(book))
-      if (nextBooks.length < this.requestCount) {
-        this.allElements = true
-      }
+      await this.retrieve()
     }
   }
 

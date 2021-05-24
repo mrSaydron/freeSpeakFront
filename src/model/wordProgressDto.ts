@@ -1,8 +1,8 @@
 export interface WordProgress {
-  id?: number,
-  boxNumber?: number,
-  successfulAttempts?: number,
-  type?: string
+  id?: number;
+  boxNumber?: number;
+  successfulAttempts?: number;
+  type?: string;
 }
 
 export class WordProgressDto implements WordProgress {
