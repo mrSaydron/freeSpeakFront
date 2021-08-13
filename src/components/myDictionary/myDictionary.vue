@@ -16,7 +16,7 @@
       :server-items-length="words.length"
       :sort-by.sync="sortBy"
       :sort-desc.sync="sortDesc"
-
+      @click:row="clickRow"
       show-select
       :single-select="false"
       v-model="selectWords"
@@ -27,7 +27,7 @@
         </v-icon>
       </template>
       <template v-slot:item.erase="{ item }">
-        <v-icon @click="eraserWord(item)">
+        <v-icon @click.stop="eraserWord(item)">
           mdi-eraser
         </v-icon>
       </template>
@@ -38,7 +38,7 @@
         </v-icon>
       </template>
       <template v-slot:item.remove="{ item }">
-        <v-icon @click="removeWord(item)">
+        <v-icon @click.stop="removeWord(item)">
           mdi-close
         </v-icon>
       </template>
@@ -49,7 +49,7 @@
         </v-icon>
       </template>
       <template v-slot:item.know="{ item }">
-        <v-icon @click="knowWord(item)">
+        <v-icon @click.stop="knowWord(item)">
           mdi-head-lightbulb
         </v-icon>
       </template>
@@ -71,12 +71,15 @@ import { Inject, Vue, Watch } from 'vue-property-decorator'
 import UserWordService from '@/services/userWordService'
 import { UserWordDto } from '@/model/userWordDto'
 import { asc, desc, SortValue } from '@/model/sortValue'
+import { WordDto } from '@/model/wordDto'
+import FileService from '@/services/fileService'
 
 @Component({
   components: {}
 })
 export default class MyDictionary extends Vue {
   @Inject() readonly userWordService!: UserWordService
+  @Inject() readonly fileService!: FileService
 
   public requestCount = 20
   public allElements = false
@@ -329,6 +332,17 @@ export default class MyDictionary extends Vue {
   @Watch('selectWords')
   public async selectWordsChange (selectWords: UserWordDto[], oldSelectWords: UserWordDto[]) {
     this.selectAll = selectWords.length === this.words.length
+  }
+
+  public async clickRow (userWord: UserWordDto) {
+    console.log(userWord)
+    if (userWord && userWord.word && userWord.word.audioId) {
+      if (!userWord.word.audioUrl) {
+        userWord.word.audioUrl = await this.fileService.getUrl(userWord.word.audioId)
+      }
+      const audio = new Audio(userWord.word.audioUrl)
+      audio.play()
+    }
   }
 }
 </script>

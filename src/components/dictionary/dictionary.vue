@@ -17,18 +17,19 @@ import { SortDirection } from '@/model/enums/sortDirection'
       :server-items-length="words.length"
       :sort-by.sync="sortBy"
       :sort-desc.sync="sortDesc"
+      @click:row="clickRow"
     >
       <template v-slot:item.action="{ item }">
         <v-icon
           v-if="!item.userHas"
           class="mr-2"
-          @click="addWord(item)"
+          @click.stop="addWord(item)"
         >
           mdi-plus
         </v-icon>
         <v-icon
           v-else
-          @click="removeWord(item)"
+          @click.stop="removeWord(item)"
         >
           mdi-close
         </v-icon>
@@ -46,6 +47,7 @@ import WordService from '@/services/wordService'
 import { WordDto } from '@/model/wordDto'
 import { asc, desc, SortValue } from '@/model/sortValue'
 import UserWordService from '@/services/userWordService'
+import FileService from '@/services/fileService'
 
 @Component({
   components: {}
@@ -53,6 +55,7 @@ import UserWordService from '@/services/userWordService'
 export default class Dictionary extends Vue {
   @Inject() readonly wordService!: WordService
   @Inject() readonly userWordService!: UserWordService
+  @Inject() readonly fileService!: FileService
 
   public requestCount = 20
   public allElements = false
@@ -182,6 +185,17 @@ export default class Dictionary extends Vue {
     word.userHas = !word.userHas
     if (word.id) {
       this.userWordService.removeWord(word.id)
+    }
+  }
+
+  public async clickRow (word: WordDto) {
+    console.log(word)
+    if (word && word.audioId) {
+      if (!word.audioUrl) {
+        word.audioUrl = await this.fileService.getUrl(word.audioId)
+      }
+      const audio = new Audio(word.audioUrl)
+      audio.play()
     }
   }
 }

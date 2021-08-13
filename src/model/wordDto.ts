@@ -6,11 +6,13 @@ export interface Word {
   partOfSpeech?: string;
   translate?: string;
   totalAmount?: number;
-  urlPicture?: string;
-  urlAudio?: string;
+  pictureId?: string;
+  audioId?: string;
   frequency?: number;
   frequencyPercent?: string;
   userHas?: boolean;
+  pictureUrl?: string;
+  audioUrl?: string;
 }
 
 export class WordDto implements Word {
@@ -20,12 +22,14 @@ export class WordDto implements Word {
     public partOfSpeech?: string,
     public translate?: string,
     public totalAmount?: number,
-    public urlPicture?: string,
-    public urlAudio?: string,
+    public pictureId?: string,
+    public audioId?: string,
     public frequency?: number,
     public frequencyPercent?: string,
     public partOfSpeechNote?: any,
-    public userHas?: boolean
+    public userHas?: boolean,
+    public pictureUrl?: string,
+    public audioUrl?: string
   ) {
     console.log('WordDto')
   }
