@@ -13,6 +13,31 @@
           <h4 v-if="book.source">{{book.source}}</h4>
         </v-col>
       </v-row>
+      <v-row
+        align="end"
+        justify="end"
+      >
+        <v-col
+          class="text-end"
+        >
+          <div
+            v-if="userHasAllWords != null"
+          >
+            <v-btn
+              v-if="userHasAllWords"
+              class="ma-6"
+              color="green"
+              disabled
+            >Все слова в словаре</v-btn>
+            <v-btn
+              v-else
+              class="ma-6"
+              color="yellow"
+              @click="addWordToDictionary"
+            >Узучать слова</v-btn>
+          </div>
+        </v-col>
+      </v-row>
     </v-parallax>
     <v-tabs v-model="tab">
       <v-tab>Текст</v-tab>
@@ -57,18 +82,36 @@ export default class Book extends Vue {
   public book: BookDto = {}
   public dictionary: DictionaryDto = {}
   public tab = 0
+  public userHasAllWords: boolean | null = null
 
   public async mounted () {
     if (this.id) {
-      const id = Number(this.id)
-      this.bookService.sendOpenBook(id).catch(err => console.log(err))
-      this.book = await this.bookService.find(Number(id))
-      const name = this.book.pictureName ? this.book.pictureName : DefaultNamesEnum.book
-      this.fileService.getUrl(name)
-        .then(res => { this.book.pictureUrl = res })
-      if (this.book && this.book.dictionaryId) {
-        this.dictionary = await this.dictionaryService.find(this.book.dictionaryId)
-      }
+      const bookId = Number(this.id)
+      this.bookService.sendOpenBook(bookId).catch(err => console.log(err))
+      this.bookService.find(Number(bookId))
+        .then(book => {
+          this.book = book
+          const name = this.book.pictureName ? this.book.pictureName : DefaultNamesEnum.book
+          this.fileService.getUrl(name)
+            .then(res => { this.book.pictureUrl = res })
+          if (this.book && this.book.dictionaryId) {
+            this.dictionaryService.find(this.book.dictionaryId)
+              .then(dictionary => {
+                this.dictionary = dictionary
+              })
+          }
+        })
+      this.bookService.checkUserLibrary(bookId)
+        .then(check => {
+          this.userHasAllWords = check
+        })
+    }
+  }
+
+  public async addWordToDictionary () {
+    if (this.book && this.book.id) {
+      this.bookService.addWordToDictionary(this.book.id)
+      this.userHasAllWords = true
     }
   }
 }

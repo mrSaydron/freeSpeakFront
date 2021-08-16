@@ -140,4 +140,30 @@ export default class BookService {
         })
     })
   }
+
+  public async checkUserLibrary (bookId: number): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      axios
+        .get(`${baseApiUrl}/check-user-library/${bookId}`)
+        .then(res => {
+          resolve(res.data)
+        })
+        .catch(err => {
+          reject(err)
+        })
+    })
+  }
+
+  public async addWordToDictionary (bookId: number): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      axios
+        .put(`${baseApiUrl}/add-words-to-dictionary/${bookId}`)
+        .then(() => {
+          resolve()
+        })
+        .catch(err => {
+          reject(err)
+        })
+    })
+  }
 }
