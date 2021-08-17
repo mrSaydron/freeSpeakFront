@@ -13,6 +13,7 @@ export interface Book {
   users?: IUser[];
   pictureName?: string;
   pictureUrl?: string;
+  know?: number;
 }
 
 export class BookDto implements Book {
@@ -28,7 +29,8 @@ export class BookDto implements Book {
     public loadedUserId?: number,
     public users?: IUser[],
     public pictureName?: string,
-    public pictureUrl?: string
+    public pictureUrl?: string,
+    public know?: number
   ) {
     this.publicBook = this.publicBook || false
     this.pictureName = this.pictureName || ''

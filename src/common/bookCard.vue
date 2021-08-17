@@ -3,10 +3,16 @@
     <v-card @click="toBook(book.id)">
       <v-img
         :src="book.pictureUrl"
-        class="align-end shadow-text"
         height="200px"
       >
-        <v-card-title>{{ book.title }}</v-card-title>
+        <v-card-title>
+          <v-icon
+            x-large
+            :color="knowLevel()"
+            class="mr-1"
+          >mdi-head-lightbulb</v-icon>
+          {{ book.title }}
+        </v-card-title>
         <v-card-text>{{ book.author }}</v-card-text>
       </v-img>
     </v-card>
@@ -17,6 +23,7 @@
 import Component from 'vue-class-component'
 import { Vue, Prop } from 'vue-property-decorator'
 import { BookDto } from '@/model/bookDto'
+import { defaultLevel, getLevel } from '@/model/enums/knowLevelEnum'
 
 @Component({
   components: {
@@ -27,6 +34,14 @@ export default class BookCard extends Vue {
 
   public toBook (id: number): void {
     this.$router.push(`/book/${id}`)
+  }
+
+  public knowLevel (): string {
+    let result = defaultLevel
+    if (this.book) {
+      result = getLevel(this.book.know)
+    }
+    return result
   }
 }
 </script>
