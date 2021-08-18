@@ -176,7 +176,7 @@ export default class MyDictionary extends Vue {
       const nextWords = await this.retrieve()
       this.words = this.words.concat(nextWords)
 
-      if (this.selectWords) {
+      if (this.selectAll) {
         this.selectWords = this.selectWords.concat(nextWords)
       }
     }
