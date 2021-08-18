@@ -56,7 +56,7 @@ export default class UserWordService {
       params.append('boxNumber.equals', boxNumberFilter + '')
     }
     if (wordSort && wordSort.sortDirection) {
-      params.append('sort', `word,${wordSort.sortDirection.direction}`)
+      params.append('sort', `word.word,${wordSort.sortDirection.direction}`)
       if (wordSort.maxValue) {
         params.append(`startWord.${wordSort.sortDirection.compare}`, wordSort.maxValue)
       }
