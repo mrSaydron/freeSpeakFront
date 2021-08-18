@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import VueRouter, { RouteConfig } from 'vue-router'
+import VueRouter, { Route, RouteConfig } from 'vue-router'
 
 import { Authority } from '@/shared/authority'
 
@@ -14,6 +14,8 @@ import MyDictionary from '@/components/myDictionary/myDictionary.vue'
 import CardsLearn from '@/components/cardsLearn/cardsLearn.vue'
 
 Vue.use(VueRouter)
+
+let lastPage: Route | null = null
 
 const routes: Array<RouteConfig> = [
   {
@@ -32,7 +34,9 @@ const routes: Array<RouteConfig> = [
     component: Library,
     meta: {
       authorities: [Authority.USER],
-      backPage: '/'
+      backPage: () => {
+        return '/'
+      }
     }
   },
   {
@@ -41,7 +45,9 @@ const routes: Array<RouteConfig> = [
     component: MyBooks,
     meta: {
       authorities: [Authority.USER],
-      backPage: '/'
+      backPage: () => {
+        return '/'
+      }
     }
   },
   {
@@ -50,7 +56,9 @@ const routes: Array<RouteConfig> = [
     component: NewBook,
     meta: {
       authorities: [Authority.USER],
-      backPage: '/library'
+      backPage: () => {
+        return '/library'
+      }
     }
   },
   {
@@ -60,7 +68,13 @@ const routes: Array<RouteConfig> = [
     component: Book,
     meta: {
       authorities: [Authority.USER],
-      backPage: '/library'
+      backPage: () => {
+        let result = '/library'
+        if (lastPage && lastPage.path && lastPage.path === '/my-books') {
+          result = '/my-books'
+        }
+        return result
+      }
     }
   },
   {
@@ -69,7 +83,9 @@ const routes: Array<RouteConfig> = [
     component: Dictionary,
     meta: {
       authorities: [Authority.USER],
-      backPage: '/'
+      backPage: () => {
+        return '/'
+      }
     }
   },
   {
@@ -78,7 +94,9 @@ const routes: Array<RouteConfig> = [
     component: MyDictionary,
     meta: {
       authorities: [Authority.USER],
-      backPage: '/'
+      backPage: () => {
+        return '/'
+      }
     }
   },
   {
@@ -87,7 +105,9 @@ const routes: Array<RouteConfig> = [
     component: CardsLearn,
     meta: {
       authorities: [Authority.USER],
-      backPage: '/'
+      backPage: () => {
+        return '/my-dictionary'
+      }
     }
   }
 ]
@@ -96,6 +116,11 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  lastPage = from
+  next()
 })
 
 export default router

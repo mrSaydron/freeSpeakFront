@@ -23,6 +23,8 @@ const wordService = new WordService()
 const userWordService = new UserWordService()
 const fileService = new FileService()
 
+const lastPage = ''
+
 router.beforeEach((to, from, next) => {
   if (!to.matched.length) {
     next('/not-found')

@@ -40,7 +40,7 @@ export default class Header extends Vue {
   }
 
   public get backPage (): string {
-    return this.$route.meta.backPage
+    return this.$route.meta.backPage && this.$route.meta.backPage()
   }
 }
 </script>
