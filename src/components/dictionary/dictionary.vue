@@ -189,13 +189,12 @@ export default class Dictionary extends Vue {
   }
 
   public async clickRow (word: WordDto) {
-    console.log(word)
     if (word && word.audioId) {
       if (!word.audioUrl) {
         word.audioUrl = await this.fileService.getUrl(word.audioId)
       }
       const audio = new Audio(word.audioUrl)
-      audio.play()
+      await audio.play()
     }
   }
 }

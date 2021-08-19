@@ -20,7 +20,7 @@
           v-if="cardType === 'plug'"
         >
           <v-card-title class="justify-center">
-            Слов больше нет
+            На сегодня слов больше нет
           </v-card-title>
         </v-card>
         <word-card-direct
