@@ -110,21 +110,21 @@ export default class Library extends Vue {
   public know0 = false
 
   public async mounted () {
-    await this.retrieve()
+    await this.retrieve(true)
   }
 
   @Watch('searchString')
   public async searchChange (common: string, oldCommon: string) {
     if (common && common !== '' && common.length >= 3) {
       this.bookFilter.titleAuthorFilter = common
-      await this.retrieve()
+      await this.retrieve(false)
     } else if (oldCommon && oldCommon !== '' && oldCommon.length >= 3) {
       this.bookFilter.titleAuthorFilter = undefined
-      await this.retrieve()
+      await this.retrieve(false)
     }
   }
 
-  public async retrieve (): Promise<void> {
+  public async retrieve (add: boolean): Promise<void> {
     const nextBooks = await this.bookService.retrieve(this.bookFilter)
     nextBooks.forEach(book => {
       const name = book.pictureName ? book.pictureName : DefaultNamesEnum.book
@@ -133,7 +133,11 @@ export default class Library extends Vue {
           book.pictureUrl = res
         })
     })
-    this.books = this.books.concat(nextBooks)
+    if (add) {
+      this.books = this.books.concat(nextBooks)
+    } else {
+      this.books = nextBooks
+    }
     this.allElements = this.books.length < this.requestCount
   }
 
@@ -146,7 +150,7 @@ export default class Library extends Vue {
       if (this.bookFilter.authorSort) {
         this.bookFilter.authorSort.maxValue = lastBook.author
       }
-      await this.retrieve()
+      await this.retrieve(true)
     }
   }
 
@@ -157,7 +161,7 @@ export default class Library extends Vue {
     this.bookFilter.titleSort = new SortValue<string>(undefined, direction)
     this.bookFilter.authorSort = undefined
 
-    this.retrieve()
+    this.retrieve(false)
   }
 
   public authorClick (direction: SortDirection): void {
@@ -167,7 +171,7 @@ export default class Library extends Vue {
     this.bookFilter.titleSort = undefined
     this.bookFilter.authorSort = new SortValue<string>(undefined, direction)
 
-    this.retrieve()
+    this.retrieve(false)
   }
 
   public know100Click (select: boolean): void {
@@ -177,7 +181,7 @@ export default class Library extends Vue {
     if (this.bookFilter.titleSort) this.bookFilter.titleSort.maxValue = undefined
     if (this.bookFilter.authorSort) this.bookFilter.authorSort.maxValue = undefined
 
-    this.retrieve()
+    this.retrieve(false)
   }
 
   public know90Click (select: boolean): void {
@@ -187,7 +191,7 @@ export default class Library extends Vue {
     if (this.bookFilter.titleSort) this.bookFilter.titleSort.maxValue = undefined
     if (this.bookFilter.authorSort) this.bookFilter.authorSort.maxValue = undefined
 
-    this.retrieve()
+    this.retrieve(false)
   }
 
   public know50Click (select: boolean): void {
@@ -197,7 +201,7 @@ export default class Library extends Vue {
     if (this.bookFilter.titleSort) this.bookFilter.titleSort.maxValue = undefined
     if (this.bookFilter.authorSort) this.bookFilter.authorSort.maxValue = undefined
 
-    this.retrieve()
+    this.retrieve(false)
   }
 
   public know0Click (select: boolean): void {
@@ -207,7 +211,7 @@ export default class Library extends Vue {
     if (this.bookFilter.titleSort) this.bookFilter.titleSort.maxValue = undefined
     if (this.bookFilter.authorSort) this.bookFilter.authorSort.maxValue = undefined
 
-    this.retrieve()
+    this.retrieve(false)
   }
 }
 </script>
