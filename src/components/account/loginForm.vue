@@ -1,10 +1,5 @@
 <template>
   <v-container>
-    <v-row>
-      <v-btn to="/">
-        <v-icon>mdi-arrow-left</v-icon>
-      </v-btn>
-    </v-row>
     <div class="text-center" v-if="loginError">
       <p class="red--text">Неправильный логин или пароль. Пожалуйста, повторите попытку</p>
     </div>
@@ -31,7 +26,6 @@
             label="Помнить меня"
           ></v-checkbox>
           <v-btn class="mr-4" @click="signIn">Войти</v-btn>
-          <v-btn class="mr-4">Зарегистрирвться</v-btn>
           <v-btn class="mr-4">Востановить</v-btn>
         </v-form>
       </v-col>

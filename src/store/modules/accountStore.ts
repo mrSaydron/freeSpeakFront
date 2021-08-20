@@ -27,6 +27,8 @@ export const accountStore: Module<any, any> = {
       state.logon = false
     },
     logout (state) {
+      localStorage.removeItem('jhi-authenticationToken')
+      sessionStorage.removeItem('jhi-authenticationToken')
       state.userIdentity = null
       state.authenticated = false
       state.logon = false

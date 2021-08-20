@@ -25,6 +25,31 @@
       <user-menu></user-menu>
     </v-app-bar>
   </div>
+  <div v-else>
+    <v-app-bar elevation="0">
+      <v-btn
+        v-if="backPage"
+        icon
+        :to="backPage"
+      >
+        <v-icon>
+          mdi-arrow-left
+        </v-icon>
+      </v-btn>
+      <v-spacer></v-spacer>
+      <v-btn
+        text
+        to="/login-form"
+      >
+        Войти
+      </v-btn>
+      <v-btn
+        text
+      >
+        Зарегистрироваться
+      </v-btn>
+    </v-app-bar>
+  </div>
 </template>
 
 <script lang="ts">

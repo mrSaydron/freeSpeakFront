@@ -32,14 +32,6 @@
             {{ account.email }}
           </p>
           <v-divider class="my-3"></v-divider>
-<!--          <v-btn-->
-<!--            depressed-->
-<!--            rounded-->
-<!--            text-->
-<!--          >-->
-<!--            НАСТРОЙКИ-->
-<!--          </v-btn>-->
-<!--          <v-divider class="my-3"></v-divider>-->
           <v-btn
             depressed
             rounded

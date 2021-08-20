@@ -19,12 +19,17 @@ const routes: Array<RouteConfig> = [
     path: '/',
     component: Library,
     meta: {
-      authorities: [Authority.USER]
+      // authorities: [Authority.USER]
     }
   },
   {
     path: '/login-form',
-    component: LoginForm
+    component: LoginForm,
+    meta: {
+      backPage: () => {
+        return '/'
+      }
+    }
   },
   {
     path: '/new-book',
