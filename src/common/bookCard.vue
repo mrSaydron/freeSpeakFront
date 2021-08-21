@@ -10,7 +10,10 @@
             x-large
             :color="knowLevel()"
             class="mr-1"
-          >mdi-head-lightbulb</v-icon>
+            v-if="authenticated"
+          >
+            mdi-head-lightbulb
+          </v-icon>
           {{ book.title }}
         </v-card-title>
         <v-card-text>{{ book.author }}</v-card-text>
@@ -42,6 +45,10 @@ export default class BookCard extends Vue {
       result = getLevel(this.book.know)
     }
     return result
+  }
+
+  public get authenticated (): boolean {
+    return this.$store.getters.authenticated
   }
 }
 </script>
