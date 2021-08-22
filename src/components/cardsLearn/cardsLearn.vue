@@ -43,7 +43,7 @@ import UserWordService from '@/services/userWordService'
 import { UserWordDto } from '@/model/userWordDto'
 import { WordProgressDto } from '@/model/wordProgressDto'
 import { CardTypeEnum } from '@/model/enums/cardTypeEnum'
-import { asc, SortValue } from '@/model/sortValue'
+import { asc, SortValue } from '@/util/sortValue'
 
 class Card {
   id: number

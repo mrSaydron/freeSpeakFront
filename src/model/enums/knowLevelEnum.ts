@@ -10,9 +10,9 @@ export class KnowLevel {
 export const defaultLevel = 'red'
 
 export const knowLevels: Array<KnowLevel> = [
-  new KnowLevel('red', 0),
-  new KnowLevel('yellow', 85),
-  new KnowLevel('green', 95)
+  new KnowLevel('red', 0.0),
+  new KnowLevel('yellow', 0.85),
+  new KnowLevel('green', 0.95)
 ]
 
 export function getLevel (know?: number): string {
@@ -20,7 +20,7 @@ export function getLevel (know?: number): string {
   if (know) {
     for (let i = 1; i < knowLevels.length; i++) {
       const knowLevel = knowLevels[i]
-      if (know * 100 >= knowLevel.know) {
+      if (know >= knowLevel.know) {
         result = knowLevel.level
       } else {
         break

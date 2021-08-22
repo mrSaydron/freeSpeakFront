@@ -15,27 +15,21 @@
       </sort-button>
       <v-divider :vertical="true"></v-divider>
       <select-button
-        text="100%"
-        :select="know100"
-        @update:select="know100Click"
+        text="Легко"
+        :select="knowGreen"
+        @update:select="knowGreenClick"
       >
       </select-button>
       <select-button
-        text="90%"
-        :select="know90"
-        @update:select="know90Click"
+        text="Средне"
+        :select="knowYellow"
+        @update:select="knowYellowClick"
       >
       </select-button>
       <select-button
-        text="50%"
-        :select="know50"
-        @update:select="know50Click"
-      >
-      </select-button>
-      <select-button
-        text="0%"
-        :select="know0"
-        @update:select="know0Click"
+        text="Сложно"
+        :select="knowRed"
+        @update:select="knowRedClick"
       >
       </select-button>
       <v-text-field
@@ -69,11 +63,12 @@ import BookCard from '@/common/bookCard.vue'
 import BookService from '@/services/bookService'
 import { BookDto } from '@/model/bookDto'
 import { BookFilter } from '@/services/filters/bookFilter'
-import { SortValue, asc, desc, SortDirection } from '@/model/sortValue'
+import { SortValue, asc, desc, SortDirection } from '@/util/sortValue'
 import SortButton from '@/common/sortButton.vue'
 import SelectButton from '@/common/selectButton.vue'
 import FileService from '@/services/fileService'
 import { DefaultNamesEnum } from '@/model/enums/defaultNamesEnum'
+import { knowLevels } from '@/model/enums/knowLevelEnum'
 
 @Component({
   components: {
@@ -94,9 +89,6 @@ export default class Library extends Vue {
     undefined,
     true,
     undefined,
-    undefined,
-    undefined,
-    undefined,
     new SortValue<string>(undefined, asc),
     undefined,
     this.requestCount
@@ -104,10 +96,9 @@ export default class Library extends Vue {
 
   public nameDirection: SortDirection | null = asc
   public authorDirection: SortDirection | null = null
-  public know100 = false
-  public know90 = false
-  public know50 = false
-  public know0 = false
+  public knowGreen = false
+  public knowYellow = false
+  public knowRed = false
 
   public async mounted () {
     await this.retrieve(true)
@@ -174,9 +165,19 @@ export default class Library extends Vue {
     this.retrieve(false)
   }
 
-  public know100Click (select: boolean): void {
-    this.know100 = select
-    this.bookFilter.know100Filter = select
+  public knowGreenClick (select: boolean): void {
+    this.knowGreen = select
+    if (select) {
+      this.knowYellow = false
+      this.knowRed = false
+      this.bookFilter.knowFilter!.lessThan = undefined
+      this.bookFilter.knowFilter!.lessThanOrEqual = 1.0
+      this.bookFilter.knowFilter!.greaterThanOrEqual = knowLevels[2].know
+    } else {
+      this.bookFilter.knowFilter!.lessThan = undefined
+      this.bookFilter.knowFilter!.lessThanOrEqual = undefined
+      this.bookFilter.knowFilter!.greaterThanOrEqual = undefined
+    }
 
     if (this.bookFilter.titleSort) this.bookFilter.titleSort.maxValue = undefined
     if (this.bookFilter.authorSort) this.bookFilter.authorSort.maxValue = undefined
@@ -184,9 +185,19 @@ export default class Library extends Vue {
     this.retrieve(false)
   }
 
-  public know90Click (select: boolean): void {
-    this.know90 = select
-    this.bookFilter.know90Filter = select
+  public knowYellowClick (select: boolean): void {
+    this.knowYellow = select
+    if (select) {
+      this.knowGreen = false
+      this.knowRed = false
+      this.bookFilter.knowFilter!.lessThan = knowLevels[2].know
+      this.bookFilter.knowFilter!.lessThanOrEqual = undefined
+      this.bookFilter.knowFilter!.greaterThanOrEqual = knowLevels[1].know
+    } else {
+      this.bookFilter.knowFilter!.lessThan = undefined
+      this.bookFilter.knowFilter!.lessThanOrEqual = undefined
+      this.bookFilter.knowFilter!.greaterThanOrEqual = undefined
+    }
 
     if (this.bookFilter.titleSort) this.bookFilter.titleSort.maxValue = undefined
     if (this.bookFilter.authorSort) this.bookFilter.authorSort.maxValue = undefined
@@ -194,19 +205,19 @@ export default class Library extends Vue {
     this.retrieve(false)
   }
 
-  public know50Click (select: boolean): void {
-    this.know50 = select
-    this.bookFilter.know50Filter = select
-
-    if (this.bookFilter.titleSort) this.bookFilter.titleSort.maxValue = undefined
-    if (this.bookFilter.authorSort) this.bookFilter.authorSort.maxValue = undefined
-
-    this.retrieve(false)
-  }
-
-  public know0Click (select: boolean): void {
-    this.know0 = select
-    this.bookFilter.know0Filter = select
+  public knowRedClick (select: boolean): void {
+    this.knowRed = select
+    if (select) {
+      this.knowGreen = false
+      this.knowYellow = false
+      this.bookFilter.knowFilter!.lessThan = knowLevels[1].know
+      this.bookFilter.knowFilter!.lessThanOrEqual = undefined
+      this.bookFilter.knowFilter!.greaterThanOrEqual = knowLevels[0].know
+    } else {
+      this.bookFilter.knowFilter!.lessThan = undefined
+      this.bookFilter.knowFilter!.lessThanOrEqual = undefined
+      this.bookFilter.knowFilter!.greaterThanOrEqual = undefined
+    }
 
     if (this.bookFilter.titleSort) this.bookFilter.titleSort.maxValue = undefined
     if (this.bookFilter.authorSort) this.bookFilter.authorSort.maxValue = undefined

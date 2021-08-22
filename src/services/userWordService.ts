@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { UserWordDto } from '@/model/userWordDto.ts'
-import { SortValue } from '@/model/sortValue'
+import { SortValue } from '@/util/sortValue'
 
 const baseApiUrl = '/api/user-word'
 

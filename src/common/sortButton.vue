@@ -13,7 +13,7 @@
 <script lang="ts">
 import Component from 'vue-class-component'
 import { Vue, Prop, PropSync } from 'vue-property-decorator'
-import { asc, desc, SortDirection } from '@/model/sortValue'
+import { asc, desc, SortDirection } from '@/util/sortValue'
 
 @Component({
   components: {

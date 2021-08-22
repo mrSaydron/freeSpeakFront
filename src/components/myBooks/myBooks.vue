@@ -27,7 +27,7 @@ import BookCard from '@/common/bookCard.vue'
 import BookService from '@/services/bookService'
 import { BookDto } from '@/model/bookDto'
 import { BookFilter } from '@/services/filters/bookFilter'
-import { SortValue, asc } from '@/model/sortValue'
+import { SortValue, asc } from '@/util/sortValue'
 import { DefaultNamesEnum } from '@/model/enums/defaultNamesEnum'
 import FileService from '@/services/fileService'
 
@@ -47,9 +47,6 @@ export default class MyBooks extends Vue {
   public bookFilter = new BookFilter(
     undefined,
     false,
-    undefined,
-    undefined,
-    undefined,
     undefined,
     new SortValue<string>(undefined, asc),
     undefined,

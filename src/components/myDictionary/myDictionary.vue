@@ -70,7 +70,7 @@ import Component from 'vue-class-component'
 import { Inject, Vue, Watch } from 'vue-property-decorator'
 import UserWordService from '@/services/userWordService'
 import { UserWordDto } from '@/model/userWordDto'
-import { asc, desc, SortValue } from '@/model/sortValue'
+import { asc, desc, SortValue } from '@/util/sortValue'
 import { WordDto } from '@/model/wordDto'
 import FileService from '@/services/fileService'
 

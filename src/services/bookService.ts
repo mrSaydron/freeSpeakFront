@@ -55,24 +55,7 @@ export default class BookService {
    * @private
    */
   private static fillRequestQuery (params: URLSearchParams, bookFilter: BookFilter): void {
-    if (bookFilter.titleAuthorFilter) {
-      params.append('titleAuthorFilter.contains', bookFilter.titleAuthorFilter)
-    }
-    if (bookFilter.orPublicBookFilter) {
-      params.append('orPublicBookFilter.equals', bookFilter.orPublicBookFilter + '')
-    }
-    if (bookFilter.know100Filter) {
-      params.append('know100Filter.equals', bookFilter.know100Filter + '')
-    }
-    if (bookFilter.know90Filter) {
-      params.append('know90Filter.equals', bookFilter.know90Filter + '')
-    }
-    if (bookFilter.know50Filter) {
-      params.append('know50Filter.equals', bookFilter.know50Filter + '')
-    }
-    if (bookFilter.know0Filter) {
-      params.append('know0Filter.equals', bookFilter.know0Filter + '')
-    }
+    bookFilter.addAppend(params)
 
     // sorts
     if (bookFilter.titleSort && bookFilter.titleSort.sortDirection) {
