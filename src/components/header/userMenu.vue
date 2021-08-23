@@ -31,6 +31,17 @@
           <p class="caption mt-1">
             {{ account.email }}
           </p>
+          <div v-if="isAdmin">
+            <v-divider class="my-3"></v-divider>
+            <v-btn
+              depressed
+              rounded
+              text
+              @click="addBook"
+            >
+              ЗАГРУЗИТЬ КНИГУ
+            </v-btn>
+          </div>
           <v-divider class="my-3"></v-divider>
           <v-btn
             depressed
@@ -48,14 +59,19 @@
 
 <script lang="ts">
 import Component from 'vue-class-component'
-import { Vue } from 'vue-property-decorator'
+import { Inject, Vue } from 'vue-property-decorator'
 
 import { UserDto } from '@/model/userDto'
+import AccountService from '@/services/accountService'
 
 @Component({
   components: {}
 })
 export default class UserMenu extends Vue {
+  @Inject() readonly accountService!: AccountService;
+
+  public isAdminUser = false
+
   get account (): UserDto {
     return this.$store.getters.account
   }
@@ -63,6 +79,19 @@ export default class UserMenu extends Vue {
   public logout () {
     this.$store.commit('logout')
     this.$router.push('/')
+  }
+
+  public addBook () {
+    this.$router.push('/new-book')
+  }
+
+  public get isAdmin (): boolean {
+    this.accountService
+      .hasAnyAuthorityAndCheckAuth('ROLE_ADMIN')
+      .then(value => {
+        this.isAdminUser = value
+      })
+    return this.isAdminUser
   }
 }
 </script>

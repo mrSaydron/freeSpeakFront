@@ -70,11 +70,18 @@ const routes: Array<RouteConfig> = [
         return '/'
       }
     }
+  },
+  {
+    path: '/new-book',
+    name: 'NewBook',
+    component: NewBook,
+    meta: {
+      authorities: [Authority.ADMIN],
+      backPage: () => {
+        return '/'
+      }
+    }
   }
-  // {
-  //   path: '*',
-  //   redirect: '/'
-  // }
 ]
 
 const router = new VueRouter({

@@ -59,11 +59,6 @@
             v-model="book.source"
             label="Источник"
           ></v-text-field>
-          <v-checkbox
-            v-model="book.publicBook"
-            label="Публичная"
-            required
-          ></v-checkbox>
         </v-col>
       </v-row>
       <v-row class="mt-3">
@@ -145,6 +140,7 @@ export default class Library extends Vue {
       if (this.picture) {
         this.book.pictureName = await this.fileService.savePicture(this.picture)
       }
+      this.book.publicBook = true
       await this.bookService.create(this.book)
       this.$router.push('/library')
     }
