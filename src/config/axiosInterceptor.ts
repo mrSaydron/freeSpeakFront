@@ -1,7 +1,5 @@
 import axios from 'axios'
 
-// import { SERVER_API_URL } from '@/constants'
-
 const TIMEOUT = 1000000
 const onRequestSuccess = (config: any) => {
   const token = localStorage.getItem('jhi-authenticationToken') || sessionStorage.getItem('jhi-authenticationToken')
@@ -12,7 +10,6 @@ const onRequestSuccess = (config: any) => {
     config.headers.Authorization = `Bearer ${token}`
   }
   config.timeout = TIMEOUT
-  // config.url = `${SERVER_API_URL}${config.url}`
   return config
 }
 

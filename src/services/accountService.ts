@@ -33,7 +33,7 @@ export default class AccountService {
   public retrieveAccount (): Promise<boolean> {
     return new Promise(resolve => {
       axios
-        .get('api/account')
+        .get('/api/account')
         .then(response => {
           console.log(response)
 

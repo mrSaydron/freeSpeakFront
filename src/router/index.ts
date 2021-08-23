@@ -19,7 +19,6 @@ const routes: Array<RouteConfig> = [
     path: '/',
     component: Library,
     meta: {
-      // authorities: [Authority.USER]
     }
   },
   {
@@ -72,6 +71,10 @@ const routes: Array<RouteConfig> = [
       }
     }
   }
+  // {
+  //   path: '*',
+  //   redirect: '/'
+  // }
 ]
 
 const router = new VueRouter({

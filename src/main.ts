@@ -23,11 +23,15 @@ const wordService = new WordService()
 const userWordService = new UserWordService()
 const fileService = new FileService()
 
-const lastPage = ''
+router.beforeEach(async (to, from, next) => {
+  console.log(to)
 
-router.beforeEach((to, from, next) => {
+  if (!accountService.authenticated) {
+    await accountService.retrieveAccount()
+  }
+
   if (!to.matched.length) {
-    next('/not-found')
+    next('/')
   }
 
   if (to.meta && to.meta.authorities && to.meta.authorities.length > 0) {
