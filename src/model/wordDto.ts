@@ -16,6 +16,7 @@ export interface Word {
 }
 
 export class WordDto implements Word {
+  /* eslint no-useless-constructor: "off" */
   constructor (
     public id?: number,
     public word?: string,
@@ -30,9 +31,7 @@ export class WordDto implements Word {
     public userHas?: boolean,
     public pictureUrl?: string,
     public audioUrl?: string
-  ) {
-    console.log('WordDto')
-  }
+  ) {}
 
   /**
    * Запольняет слово полями для отображения

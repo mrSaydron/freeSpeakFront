@@ -1,5 +1,6 @@
 <template>
   <v-container>
+    <h1 class="text-center">Войти</h1>
     <div class="text-center" v-if="loginError">
       <p class="red--text">Неправильный логин или пароль. Пожалуйста, повторите попытку</p>
     </div>

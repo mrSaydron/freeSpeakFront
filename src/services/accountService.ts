@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { Store } from 'vuex'
 import VueRouter from 'vue-router'
+import { UserDto } from '@/model/userDto'
 
 export default class AccountService {
   // eslint-disable-next-line
@@ -9,25 +10,22 @@ export default class AccountService {
 
   public async login (login: string, password: string, remember: boolean): Promise<boolean> {
     const data = { username: login, password: password, rememberMe: remember }
-
     try {
       const result = await axios.post('api/authenticate', data)
-
-      const bearerToken = result.headers.authorization
-      if (bearerToken && bearerToken.slice(0, 7) === 'Bearer ') {
-        const jwt = bearerToken.slice(7, bearerToken.length)
-        if (remember) {
-          localStorage.setItem('jhi-authenticationToken', jwt)
-        } else {
-          sessionStorage.setItem('jhi-authenticationToken', jwt)
-        }
-      }
-
-      this.retrieveAccount()
+      await this.pushToken(result)
       return true
     } catch (err) {
       return false
     }
+  }
+
+  public async pushToken (response: any): Promise<void> {
+    const bearerToken = response.headers.authorization
+    if (bearerToken && bearerToken.slice(0, 7) === 'Bearer ') {
+      const jwt = bearerToken.slice(7, bearerToken.length)
+      localStorage.setItem('jhi-authenticationToken', jwt)
+    }
+    await this.retrieveAccount()
   }
 
   public retrieveAccount (): Promise<boolean> {
@@ -41,9 +39,6 @@ export default class AccountService {
           const account = response.data
           if (account) {
             this.store.commit('authenticated', account)
-            // if (this.store.getters.currentLanguage !== account.langKey) {
-            //   this.store.commit('currentLanguage', account.langKey)
-            // }
             if (sessionStorage.getItem('requested-url')) {
               const requestUrl: string = sessionStorage.getItem('requested-url') || ''
               this.router.replace(requestUrl)
@@ -98,5 +93,15 @@ export default class AccountService {
 
   public get userAuthorities (): any {
     return this.store.getters.account.authorities
+  }
+
+  public async register (user: UserDto): Promise<boolean> {
+    try {
+      const result = await axios.post('/api/register', user)
+      await this.pushToken(result)
+    } catch (err) {
+      throw err.response.data
+    }
+    return true
   }
 }

@@ -1,4 +1,4 @@
-export interface IUser {
+export interface User {
   id?: any;
   login?: string;
   firstName?: string;
@@ -14,8 +14,9 @@ export interface IUser {
   password?: string;
 }
 
-export class UserDto implements IUser {
-  constructor(
+export class UserDto implements User {
+  /* eslint no-useless-constructor: "off" */
+  constructor (
     public id?: any,
     public login?: string,
     public firstName?: string,

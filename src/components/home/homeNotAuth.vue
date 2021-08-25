@@ -16,7 +16,10 @@
       >Войти</v-btn>
     </div>
     <div class="text-center mt-3">
-      <v-btn elevation="2">Зарегистрироваться</v-btn>
+      <v-btn
+        to="/register"
+        elevation="2"
+      >Зарегистрироваться</v-btn>
     </div>
   </v-container>
 </template>

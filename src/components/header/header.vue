@@ -45,6 +45,7 @@
       </v-btn>
       <v-btn
         text
+        to="/register"
       >
         Зарегистрироваться
       </v-btn>

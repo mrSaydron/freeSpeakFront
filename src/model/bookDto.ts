@@ -1,4 +1,4 @@
-import { IUser } from '@/model/userDto.js'
+import { User } from '@/model/userDto.js'
 
 export interface Book {
   id?: number;
@@ -10,7 +10,7 @@ export interface Book {
   dictionaryId?: number;
   loadedUserLogin?: string;
   loadedUserId?: number;
-  users?: IUser[];
+  users?: User[];
   pictureName?: string;
   pictureUrl?: string;
   know?: number;
@@ -27,7 +27,7 @@ export class BookDto implements Book {
     public dictionaryId?: number,
     public loadedUserLogin?: string,
     public loadedUserId?: number,
-    public users?: IUser[],
+    public users?: User[],
     public pictureName?: string,
     public pictureUrl?: string,
     public know?: number

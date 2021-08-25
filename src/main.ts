@@ -38,7 +38,7 @@ router.beforeEach(async (to, from, next) => {
     accountService.hasAnyAuthorityAndCheckAuth(to.meta.authorities).then(value => {
       if (!value) {
         sessionStorage.setItem('requested-url', to.fullPath)
-        next('/forbidden')
+        next('/')
       } else {
         next()
       }
