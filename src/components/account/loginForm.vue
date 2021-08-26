@@ -27,7 +27,10 @@
             label="Помнить меня"
           ></v-checkbox>
           <v-btn class="mr-4" @click="signIn">Войти</v-btn>
-          <v-btn class="mr-4">Востановить</v-btn>
+          <v-btn
+            class="mr-4"
+            to="/reset-init"
+          >Восстановить пароль</v-btn>
         </v-form>
       </v-col>
     </v-row>

@@ -8,6 +8,12 @@ export default class AccountService {
   constructor (private store: Store<any>, private router: VueRouter) {
   }
 
+  /**
+   * Авторизация
+   * @param login
+   * @param password
+   * @param remember
+   */
   public async login (login: string, password: string, remember: boolean): Promise<boolean> {
     const data = { username: login, password: password, rememberMe: remember }
     try {
@@ -19,6 +25,9 @@ export default class AccountService {
     }
   }
 
+  /**
+   * Запрос токена и информации по аккаунту
+   */
   public async pushToken (response: any): Promise<void> {
     const bearerToken = response.headers.authorization
     if (bearerToken && bearerToken.slice(0, 7) === 'Bearer ') {
@@ -28,6 +37,9 @@ export default class AccountService {
     await this.retrieveAccount()
   }
 
+  /**
+   * Запрашивает информацию по аккаунту пользователя
+   */
   public retrieveAccount (): Promise<boolean> {
     return new Promise(resolve => {
       axios
@@ -95,6 +107,10 @@ export default class AccountService {
     return this.store.getters.account.authorities
   }
 
+  /**
+   * Регистрация пользователя.
+   * После регистрации запрашивает токен и информацию по аккаунту
+   */
   public async register (user: UserDto): Promise<boolean> {
     try {
       const result = await axios.post('/api/register', user)
@@ -103,5 +119,25 @@ export default class AccountService {
       throw err.response.data
     }
     return true
+  }
+
+  /**
+   * Отправляет запрос на востановление пароля
+   */
+  public async resetInit (mail: string): Promise<void> {
+    await axios.post('/api/account/reset-password/init', { mail: mail })
+  }
+
+  /**
+   * Обновляет пароль
+   */
+  public async resetFinish (key: string, password: string) {
+    try {
+      const result = await axios.post('/api/account/reset-password/finish', { key: key, newPassword: password })
+      console.log(result)
+      await this.pushToken(result)
+    } catch (err) {
+      console.log(err.response)
+    }
   }
 }

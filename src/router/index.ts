@@ -3,13 +3,12 @@ import VueRouter, { Route, RouteConfig } from 'vue-router'
 
 import { Authority } from '@/shared/authority'
 
-import LoginForm from '@/components/account/loginForm.vue'
 import Library from '@/components/library/library.vue'
 import NewBook from '@/components/newBook/newBook.vue'
 import Book from '@/components/book/book.vue'
 import MyDictionary from '@/components/myDictionary/myDictionary.vue'
 import CardsLearn from '@/components/cardsLearn/cardsLearn.vue'
-import Register from '@/components/account/register.vue'
+import account from '@/router/account'
 
 Vue.use(VueRouter)
 
@@ -20,24 +19,6 @@ const routes: Array<RouteConfig> = [
     path: '/',
     component: Library,
     meta: {
-    }
-  },
-  {
-    path: '/login-form',
-    component: LoginForm,
-    meta: {
-      backPage: () => {
-        return '/'
-      }
-    }
-  },
-  {
-    path: '/register',
-    component: Register,
-    meta: {
-      backPage: () => {
-        return '/'
-      }
     }
   },
   {
@@ -91,7 +72,8 @@ const routes: Array<RouteConfig> = [
         return '/'
       }
     }
-  }
+  },
+  ...account
 ]
 
 const router = new VueRouter({
