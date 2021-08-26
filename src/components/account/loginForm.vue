@@ -7,11 +7,14 @@
     <v-row>
       <v-col>
         <v-form
-          ref="login-form"
+          ref="form"
+          v-model="valid"
+          lazy-validation
         >
           <v-text-field
             v-model="login"
-            label="Логин"
+            label="Почта"
+            :rules="emailRules"
             required
           ></v-text-field>
           <v-text-field
@@ -26,7 +29,11 @@
             v-model="remember"
             label="Помнить меня"
           ></v-checkbox>
-          <v-btn class="mr-4" @click="signIn">Войти</v-btn>
+          <v-btn
+            class="mr-4"
+            @click="signIn"
+            :disabled="!valid"
+          >Войти</v-btn>
           <v-btn
             class="mr-4"
             to="/reset-init"
@@ -47,21 +54,34 @@ import AccountService from '@/services/accountService.js'
   components: {}
 })
 export default class LoginForm extends Vue {
-  @Inject() readonly accountService!: AccountService;
+  @Inject() readonly accountService!: AccountService
 
-  public login = '';
-  public password = '';
-  public remember = false;
-  public passwordShow = false;
-  public loginError = false;
+  $refs!: {
+    form: HTMLFormElement;
+  }
+
+  public login = ''
+  public password = ''
+  public remember = false
+  public passwordShow = false
+  public loginError = false
+  public valid = true
 
   public async signIn (): Promise<void> {
-    const result = await this.accountService.login(this.login, this.password, this.remember)
-    if (result) {
-      this.$router.push('/')
-    } else {
-      this.loginError = true
+    if (this.$refs.form.validate()) {
+      const result = await this.accountService.login(this.login, this.password, this.remember)
+      if (result) {
+        this.$router.push('/')
+      } else {
+        this.loginError = true
+      }
     }
   }
+
+  public emailRules = [
+    (v: any) => !!v || 'Обязательно для заполнения',
+    (v: any) => /.+@.+\..+/.test(v) || 'Не верная почта',
+    (v: any) => (v && v.length <= 50) || 'Не может превышать 50 символов'
+  ]
 }
 </script>
