@@ -25,10 +25,6 @@
             required
             @click:append="passwordShow = !passwordShow"
           ></v-text-field>
-          <v-checkbox
-            v-model="remember"
-            label="Помнить меня"
-          ></v-checkbox>
           <v-btn
             class="mr-4"
             @click="signIn"
@@ -62,14 +58,13 @@ export default class LoginForm extends Vue {
 
   public login = ''
   public password = ''
-  public remember = false
   public passwordShow = false
   public loginError = false
   public valid = true
 
   public async signIn (): Promise<void> {
     if (this.$refs.form.validate()) {
-      const result = await this.accountService.login(this.login, this.password, this.remember)
+      const result = await this.accountService.login(this.login, this.password, true)
       if (result) {
         this.$router.push('/')
       } else {
