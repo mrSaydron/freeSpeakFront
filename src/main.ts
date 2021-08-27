@@ -11,6 +11,7 @@ import BookDictionaryService from '@/services/bookDictionaryService'
 import WordService from '@/services/wordService'
 import UserWordService from '@/services/userWordService'
 import FileService from '@/services/fileService'
+import { Authority } from '@/shared/authority'
 
 Vue.config.productionTip = false
 
@@ -24,11 +25,9 @@ const userWordService = new UserWordService()
 const fileService = new FileService()
 
 router.beforeEach(async (to, from, next) => {
-  console.log(to)
-
-  if (!accountService.authenticated) {
-    await accountService.retrieveAccount()
-  }
+  // if (!accountService.authenticated) {
+  //   await accountService.retrieveAccount()
+  // }
 
   if (!to.matched.length) {
     next('/')
@@ -44,8 +43,8 @@ router.beforeEach(async (to, from, next) => {
       }
     })
   } else {
-    // no authorities, so just proceed
-    next()
+    console.log('routing error')
+    next('/')
   }
 })
 

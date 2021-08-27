@@ -19,6 +19,7 @@ const routes: Array<RouteConfig> = [
     path: '/',
     component: Library,
     meta: {
+      authorities: [Authority.NO_AUTHORITY, Authority.USER]
     }
   },
   {

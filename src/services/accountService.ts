@@ -2,6 +2,7 @@ import axios from 'axios'
 import { Store } from 'vuex'
 import VueRouter from 'vue-router'
 import { UserDto } from '@/model/userDto'
+import { Authority } from '@/shared/authority'
 
 export default class AccountService {
   // eslint-disable-next-line
@@ -70,33 +71,41 @@ export default class AccountService {
     })
   }
 
-  public hasAnyAuthorityAndCheckAuth (authorities: any): Promise<boolean> {
+  public async hasAnyAuthorityAndCheckAuth (authorities: any): Promise<boolean> {
     if (typeof authorities === 'string') {
       authorities = [authorities]
     }
 
-    if (!this.authenticated || !this.userAuthorities) {
-      const token = localStorage.getItem('jhi-authenticationToken') || sessionStorage.getItem('jhi-authenticationToken')
-      if (!this.store.getters.account && !this.store.getters.logon && token) {
-        return this.retrieveAccount()
-      } else {
-        return new Promise(resolve => {
-          resolve(false)
-        })
+    const token = localStorage.getItem('jhi-authenticationToken') || sessionStorage.getItem('jhi-authenticationToken')
+
+    // Нет токена, и путь для не авторизованного
+    if (!token) {
+      if (authorities.includes(Authority.NO_AUTHORITY)) {
+        return true
       }
     }
 
+    // Есть токен, не нет информации, запрашиваем информацию
+    if ((!this.authenticated || !this.userAuthorities) && token) {
+      // if (!this.store.getters.account && !this.store.getters.logon && token) {
+      let retrieveResult = false
+      if (token) {
+        retrieveResult = await this.retrieveAccount()
+      }
+      if (!token || !retrieveResult) {
+        return false
+      }
+    }
+
+    // Проверяем есть ли права
     for (let i = 0; i < authorities.length; i++) {
       if (this.userAuthorities.includes(authorities[i])) {
-        return new Promise(resolve => {
-          resolve(true)
-        })
+        return true
       }
     }
 
-    return new Promise(resolve => {
-      resolve(false)
-    })
+    // Нет прав
+    return false
   }
 
   public get authenticated (): boolean {
