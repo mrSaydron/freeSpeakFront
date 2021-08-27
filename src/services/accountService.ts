@@ -46,8 +46,6 @@ export default class AccountService {
       axios
         .get('/api/account')
         .then(response => {
-          console.log(response)
-
           this.store.commit('authenticate')
           const account = response.data
           if (account) {
@@ -58,7 +56,6 @@ export default class AccountService {
               sessionStorage.removeItem('requested-url')
             }
           } else {
-            this.store.commit('logout')
             this.router.push('/')
             sessionStorage.removeItem('requested-url')
           }
@@ -87,7 +84,6 @@ export default class AccountService {
 
     // Есть токен, не нет информации, запрашиваем информацию
     if ((!this.authenticated || !this.userAuthorities) && token) {
-      // if (!this.store.getters.account && !this.store.getters.logon && token) {
       let retrieveResult = false
       if (token) {
         retrieveResult = await this.retrieveAccount()
@@ -143,7 +139,6 @@ export default class AccountService {
   public async resetFinish (key: string, password: string) {
     try {
       const result = await axios.post('/api/account/reset-password/finish', { key: key, newPassword: password })
-      console.log(result)
       await this.pushToken(result)
     } catch (err) {
       console.log(err.response)

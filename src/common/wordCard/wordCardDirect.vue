@@ -3,6 +3,12 @@
     <v-card-title class="justify-center">
       <div v-if="!isTurn">
         {{ word.word }}
+        <v-icon
+          class="mr-1"
+          @click="play"
+        >
+          mdi-volume-high
+        </v-icon>
       </div>
       <div v-else>
         {{ word.translate }}
@@ -23,6 +29,14 @@
         </v-icon>
         НЕ ПОМНЮ
       </v-btn>
+
+      <v-btn
+        text
+        @click="turn"
+      >
+        ПЕРЕВЕРНУТЬ
+      </v-btn>
+
       <v-btn
         text
         @click="remember"
@@ -59,32 +73,33 @@ export default class WordCardDirect extends Vue {
   public isTurn = false
 
   @Watch('word')
-  public async wordChange (word: WordDto) {
+  public async wordChange (word: WordDto): Promise<void> {
     this.isTurn = false
+    await this.play()
+  }
 
-    if (word && word.audioId) {
-      if (!word.audioUrl) {
-        word.audioUrl = await this.fileService.getUrl(word.audioId)
+  public async play (): Promise<void> {
+    if (this.word && this.word.audioId) {
+      if (!this.word.audioUrl) {
+        this.word.audioUrl = await this.fileService.getUrl(this.word.audioId)
       }
-      const audio = new Audio(word.audioUrl)
+      const audio = new Audio(this.word.audioUrl)
       await audio.play()
     }
   }
 
+  public turn (): void {
+    this.isTurn = !this.isTurn
+  }
+
   public notRemember (): void {
-    if (this.isTurn) {
-      this.$emit('not-remember')
-    } else {
-      this.isTurn = !this.isTurn
-    }
+    this.isTurn = false
+    this.$emit('not-remember')
   }
 
   public remember (): void {
-    if (this.isTurn) {
-      this.$emit('remember')
-    } else {
-      this.isTurn = !this.isTurn
-    }
+    this.isTurn = false
+    this.$emit('remember')
   }
 }
 </script>

@@ -87,11 +87,9 @@ export default class CardsLearn extends Vue {
 
   public async mounted () {
     this.leftHearts = await this.userWordService.getLeftHearts()
-
     if (this.leftHearts > 0) {
       const words = await this.userWordService.getWordOfDay()
       this.cards = Card.transform(words)
-
       if (this.cards.length === 0) {
         await this.nextNewWords()
       }
@@ -102,7 +100,6 @@ export default class CardsLearn extends Vue {
   }
 
   get word (): WordDto {
-    console.log(this.card)
     return (this.card && this.card.userWord && this.card.userWord.word) || {}
   }
 
@@ -136,6 +133,7 @@ export default class CardsLearn extends Vue {
     this.card = this.cards[0]
 
     this.leftHearts--
+    if (this.leftHearts < 0) this.leftHearts = 0
     this.card.answerFailCount++
 
     if (this.leftHearts === 0) {
@@ -164,7 +162,7 @@ export default class CardsLearn extends Vue {
    * Закончились слова, загружаем следующий блок еще не изученных слов
    */
   public async nextNewWords (): Promise<void> {
-    if (!this.allElements) {
+    if (!this.allElements && this.leftHearts > 0) {
       const words = await this.userWordService.retrieve(
         undefined,
         undefined,

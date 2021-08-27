@@ -78,7 +78,8 @@ export default class UserMenu extends Vue {
 
   public logout () {
     this.$store.commit('logout')
-    this.$router.push('/')
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    this.$router.push('/').catch(() => {})
   }
 
   public addBook () {
