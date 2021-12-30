@@ -20,37 +20,57 @@
         <v-col
           class="text-end"
         >
-          <div
-            v-if="userHasAllWords != null"
+
+          <v-tooltip
+            left
+            v-if="isReading"
           >
-            <v-btn
-              v-if="userHasAllWords"
-              class="ma-6"
-              color="green"
-              disabled
-            >Все слова в словаре</v-btn>
-            <v-btn
-              v-else
-              class="ma-6"
-              color="yellow"
-              @click="addWordToDictionary"
-            >Узучать слова</v-btn>
-          </div>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                fab
+                color="blue-grey"
+                class="ma-2 white--text"
+                x-large
+                @click="notReading"
+                v-bind="attrs"
+                v-on="on"
+              >
+                <v-icon dark>
+                  mdi-star
+                </v-icon>
+              </v-btn>
+            </template>
+            <span>Не изучать слова этой книги</span>
+          </v-tooltip>
+
+          <v-tooltip
+            left
+            v-else
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                fab
+                color="blue-grey"
+                class="ma-2 white--text"
+                x-large
+                @click="reading"
+                v-bind="attrs"
+                v-on="on"
+              >
+                <v-icon dark>
+                  mdi-star-outline
+                </v-icon>
+              </v-btn>
+            </template>
+            <span>Настроить словарь для изучения слов этой книги</span>
+          </v-tooltip>
+
         </v-col>
       </v-row>
     </v-parallax>
-    <v-tabs v-model="tab">
-      <v-tab>Текст</v-tab>
-      <v-tab>Словарь</v-tab>
-    </v-tabs>
-    <v-tabs-items v-model="tab">
-      <v-tab-item>
-        <book-text :text="book.text"></book-text>
-      </v-tab-item>
-      <v-tab-item>
-        <book-dictionary :dictionary="dictionary"></book-dictionary>
-      </v-tab-item>
-    </v-tabs-items>
+    <book-text
+      :book-sentences-union="bookSentencesUnion"
+    ></book-text>
   </div>
 </template>
 
@@ -64,7 +84,9 @@ import BookDictionary from '@/components/book/bookDictionary.vue'
 import { DictionaryDto } from '@/model/dictionaryDto'
 import BookDictionaryService from '@/services/bookDictionaryService'
 import FileService from '@/services/fileService'
-import { DefaultNamesEnum } from '@/model/enums/defaultNamesEnum'
+import { BookSentenceDto } from '@/model/bookSentenceDto'
+import BookSentenceService from '@/services/bookSentenceService'
+import { BookSentenceUnionDto } from '@/model/bookSentenceUnionDto'
 
 @Component({
   components: {
@@ -76,42 +98,56 @@ export default class Book extends Vue {
   @Prop(String) readonly id?: string
 
   @Inject() readonly bookService!: BookService
+  @Inject() readonly bookSentenceService!: BookSentenceService
   @Inject() readonly dictionaryService!: BookDictionaryService
   @Inject() readonly fileService!: FileService
 
   public book: BookDto = {}
   public dictionary: DictionaryDto = {}
   public tab = 0
-  public userHasAllWords: boolean | null = null
+  public bookSentences: BookSentenceDto[] = []
+  public isReading = false
+  public bookSentencesUnion: BookSentenceUnionDto | null = null
 
   public async mounted () {
     if (this.id) {
       const bookId = Number(this.id)
-      this.bookService.sendOpenBook(bookId).catch(err => console.log(err))
-      this.bookService.find(Number(bookId))
+
+      const sentencesPromise = this.bookSentenceService.findByBook(bookId)
+        .then(data => {
+          this.bookSentences = data
+        })
+        .catch(err => console.log(err))
+
+      const bookPromise = this.bookService.find(Number(bookId))
         .then(book => {
           this.book = book
-          const name = this.book.pictureName ? this.book.pictureName : DefaultNamesEnum.book
-          this.fileService.getUrl(name)
-            .then(res => { this.book.pictureUrl = res })
-          if (this.book && this.book.dictionaryId) {
-            this.dictionaryService.find(this.book.dictionaryId)
-              .then(dictionary => {
-                this.dictionary = dictionary
+          if (this.book.pictureId) {
+            this.fileService.getUrl(this.book.pictureId)
+              .then(res => {
+                this.book.pictureUrl = res
               })
+            this.isReading = this.book.isReading || false
           }
         })
-      this.bookService.checkUserLibrary(bookId)
-        .then(check => {
-          this.userHasAllWords = check
+        .catch(err => console.log(err))
+
+      Promise.all([sentencesPromise, bookPromise])
+        .then(() => {
+          this.bookSentencesUnion = new BookSentenceUnionDto(this.book, this.bookSentences)
         })
     }
   }
 
-  public async addWordToDictionary () {
+  public notReading (): void {
+    this.isReading = !this.isReading
+    this.bookService.resetBookIsRead()
+  }
+
+  public reading (): void {
     if (this.book && this.book.id) {
-      this.bookService.addWordToDictionary(this.book.id)
-      this.userHasAllWords = true
+      this.isReading = !this.isReading
+      this.bookService.setBookIsRead(this.book.id)
     }
   }
 }

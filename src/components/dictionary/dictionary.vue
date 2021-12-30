@@ -65,8 +65,8 @@ export default class Dictionary extends Vue {
   public sortDesc: boolean[] = [false]
 
   public searchString = ''
-  public wordSort?: SortValue<string | undefined> = new SortValue(undefined, asc)
-  public amountSort?: SortValue<number | undefined>
+  public wordSort?: SortValue
+  public amountSort?: SortValue
 
   public headers = [
     {
@@ -132,11 +132,11 @@ export default class Dictionary extends Vue {
   public async updateSortBy (value: string[]): Promise<void> {
     const item = value[0]
     if (item === 'word') {
-      this.wordSort = new SortValue(undefined, asc)
+      // this.wordSort = new SortValue(undefined, asc)
       this.amountSort = undefined
     } else if (item === 'frequencyPercent') {
       this.wordSort = undefined
-      this.amountSort = new SortValue(undefined, asc)
+      // this.amountSort = new SortValue(undefined, asc)
     }
 
     this.words = await this.retrieve()

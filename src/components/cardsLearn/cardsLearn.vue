@@ -25,9 +25,10 @@
         </v-card>
         <word-card-direct
           v-if="cardType === 'direct'"
-          :word="word"
+          :userWord="card.userWord"
           @not-remember="answerFail"
           @remember="answerSuccess"
+          @know="knowWord"
         ></word-card-direct>
       </v-col>
     </v-row>
@@ -38,36 +39,10 @@
 import Component from 'vue-class-component'
 import { Inject, Vue } from 'vue-property-decorator'
 import WordCardDirect from '@/common/wordCard/wordCardDirect.vue'
-import { WordDto } from '@/model/wordDto'
 import UserWordService from '@/services/userWordService'
+import { SortValue } from '@/util/sortValue'
+import { Card } from '@/model/card'
 import { UserWordDto } from '@/model/userWordDto'
-import { WordProgressDto } from '@/model/wordProgressDto'
-import { CardTypeEnum } from '@/model/enums/cardTypeEnum'
-import { asc, SortValue } from '@/util/sortValue'
-
-class Card {
-  id: number
-  answerFailCount: number
-
-  constructor (
-    public wordProgress: WordProgressDto,
-    public userWord: UserWordDto
-  ) {
-    this.id = wordProgress.id
-    this.answerFailCount = 0
-  }
-
-  public static transform (userWords: UserWordDto[]): Card[] {
-    let result: Card[] = []
-    userWords.forEach(userWord => {
-      if (userWord.wordProgresses) {
-        const cards = userWord.wordProgresses.map(progress => new Card(progress, userWord))
-        result = result.concat(cards)
-      }
-    })
-    return result
-  }
-}
 
 @Component({
   components: {
@@ -83,9 +58,10 @@ export default class CardsLearn extends Vue {
 
   public requestCount = 20
   public allElements = false
-  public wordSort = new SortValue<string>(undefined, asc)
+  public wordSort?: SortValue
 
   public async mounted () {
+    console.log('learn mounted')
     this.leftHearts = await this.userWordService.getLeftHearts()
     if (this.leftHearts > 0) {
       const words = await this.userWordService.getWordOfDay()
@@ -96,17 +72,19 @@ export default class CardsLearn extends Vue {
       if (this.cards.length > 0) {
         this.card = this.cards[0]
       }
+      console.log('card')
+      console.log(this.card)
     }
   }
 
-  get word (): WordDto {
-    return (this.card && this.card.userWord && this.card.userWord.word) || {}
+  get word (): UserWordDto {
+    return (this.card && this.card.userWord) || {}
   }
 
   get cardType (): string {
     let result = 'plug'
     if (this.card && this.card.wordProgress && this.card.wordProgress.type) {
-      result = CardTypeEnum[this.card.wordProgress.type]
+      result = this.card.wordProgress.type
     }
     return result
   }
@@ -120,7 +98,7 @@ export default class CardsLearn extends Vue {
    * - если закончились "жизни" то все новые слова отбрасываются
    */
   public async answerFail (): Promise<void> {
-    this.userWordService.answerFail(this.card!.id!)
+    this.userWordService.answerFail(this.card!)
     const currentCard = this.cards.shift()
     if (this.cards.length < 10) {
       await this.nextNewWords()
@@ -148,7 +126,7 @@ export default class CardsLearn extends Vue {
    * - проверяем остались ли слова
    */
   public async answerSuccess (): Promise<void> {
-    this.userWordService.answerSuccess(this.card!.id!)
+    this.userWordService.answerSuccess(this.card!)
     this.cards.shift()
     if (this.cards.length > 0) {
       this.card = this.cards[0]
@@ -162,20 +140,27 @@ export default class CardsLearn extends Vue {
    * Закончились слова, загружаем следующий блок еще не изученных слов
    */
   public async nextNewWords (): Promise<void> {
+    console.log('learn next')
     if (!this.allElements && this.leftHearts > 0) {
-      const words = await this.userWordService.retrieve(
-        undefined,
-        undefined,
-        0,
-        this.wordSort,
-        undefined,
-        this.requestCount
-      )
+      const words = await this.userWordService.nextWords()
       this.allElements = words.length < this.requestCount
+      this.cards = this.cards.concat(Card.transform(words))
+      console.log(this.cards)
+    }
+  }
 
-      if (words.length > 0) {
-        this.wordSort.maxValue = words[words.length - 1].word?.word
-        this.cards = this.cards.concat(Card.transform(words))
+  /**
+   * Пользователь знает слово, оно переносится сразу в последнюю коробку
+   */
+  public async knowWord (): Promise<void> {
+    if (this.card && this.card.userWord.word && this.card.userWord.word.id) {
+      this.userWordService.knowWord(this.card.userWord.word.id)
+      this.cards.shift()
+      if (this.cards.length > 0) {
+        this.card = this.cards[0]
+      } else {
+        this.card = null
+        await this.nextNewWords()
       }
     }
   }

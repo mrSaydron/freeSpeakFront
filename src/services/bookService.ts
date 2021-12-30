@@ -2,8 +2,10 @@ import axios from 'axios'
 
 // import buildPaginationQueryOpts from '@/shared/sort/sorts';
 
+import { BookCreateDto } from '@/model/bookCreateDto.ts'
 import { BookDto } from '@/model/bookDto.ts'
 import { BookFilter } from '@/services/filters/bookFilter'
+import { BookSentenceDto } from '@/model/bookSentenceDto'
 
 const baseApiUrl = '/api/book'
 
@@ -34,42 +36,18 @@ export default class BookService {
   public async retrieve (bookFilter: BookFilter): Promise<BookDto[]> {
     const params = new URLSearchParams()
     params.append('size', '' + (bookFilter.requestCount || BookService.REQUEST_COUNT_DEFAULT))
-    BookService.fillRequestQuery(params, bookFilter)
-    return new Promise<BookDto[]>((resolve, reject) => {
+    bookFilter.addAppend(params)
+    return new Promise<BookCreateDto[]>((resolve, reject) => {
       axios
         .get(`${baseApiUrl}?${params.toString()}`)
         .then(res => {
-          res.data.forEach((book: BookDto) => { book.pictureUrl = '' })
+          res.data.forEach((book: BookCreateDto) => { book.pictureUrl = '' })
           resolve(res.data)
         })
         .catch(err => {
           reject(err)
         })
     })
-  }
-
-  /**
-   * Формирует запрос с сортировкой и фильтрами
-   * @param params
-   * @param bookFilter
-   * @private
-   */
-  private static fillRequestQuery (params: URLSearchParams, bookFilter: BookFilter): void {
-    bookFilter.addAppend(params)
-
-    // sorts
-    if (bookFilter.titleSort && bookFilter.titleSort.sortDirection) {
-      params.append('sort', `title,${bookFilter.titleSort.sortDirection.direction}`)
-      if (bookFilter.titleSort.maxValue) {
-        params.append(`startTitle.${bookFilter.titleSort.sortDirection.compare}`, `${bookFilter.titleSort.maxValue}`)
-      }
-    }
-    if (bookFilter.authorSort && bookFilter.authorSort.sortDirection) {
-      params.append('sort', `author,${bookFilter.authorSort.sortDirection.direction}`)
-      if (bookFilter.authorSort.maxValue) {
-        params.append(`startAuthor.${bookFilter.authorSort.sortDirection.compare}`, `${bookFilter.authorSort.maxValue}`)
-      }
-    }
   }
 
   public delete (id: number): Promise<any> {
@@ -85,8 +63,8 @@ export default class BookService {
     })
   }
 
-  public async create (entity: BookDto): Promise<BookDto> {
-    return new Promise<BookDto>((resolve, reject) => {
+  public async create (entity: BookCreateDto): Promise<BookCreateDto> {
+    return new Promise<BookCreateDto>((resolve, reject) => {
       axios
         .post(`${baseApiUrl}`, entity)
         .then(res => {
@@ -98,8 +76,8 @@ export default class BookService {
     })
   }
 
-  public update (entity: BookDto): Promise<BookDto> {
-    return new Promise<BookDto>((resolve, reject) => {
+  public update (entity: BookCreateDto): Promise<BookCreateDto> {
+    return new Promise<BookCreateDto>((resolve, reject) => {
       axios
         .put(`${baseApiUrl}`, entity)
         .then(res => {
@@ -111,12 +89,12 @@ export default class BookService {
     })
   }
 
-  public async sendOpenBook (id: number): Promise<any> {
-    return new Promise<any>((resolve, reject) => {
+  public async findBookSentences (id: number): Promise<BookSentenceDto[]> {
+    return new Promise<BookSentenceDto[]>((resolve, reject) => {
       axios
-        .put(`${baseApiUrl}/open/${id}`)
+        .get(`${baseApiUrl}/sentence&bookId=${id}`)
         .then(res => {
-          resolve(res)
+          resolve(res.data)
         })
         .catch(err => {
           reject(err)
@@ -141,6 +119,38 @@ export default class BookService {
     return new Promise<void>((resolve, reject) => {
       axios
         .put(`${baseApiUrl}/add-words-to-dictionary/${bookId}`)
+        .then(() => {
+          resolve()
+        })
+        .catch(err => {
+          reject(err)
+        })
+    })
+  }
+
+  /**
+   * Сбрасывает отметку "для чтения" со всех книг пользователя
+   */
+  public async resetBookIsRead (): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      axios
+        .put(`${baseApiUrl}/reset-book-is-read`)
+        .then(() => {
+          resolve()
+        })
+        .catch(err => {
+          reject(err)
+        })
+    })
+  }
+
+  /**
+   * Устанавливает флаг "для чтения" на книгу
+   */
+  public async setBookIsRead (bookId: number): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      axios
+        .put(`${baseApiUrl}/set-book-is-read/${bookId}`)
         .then(() => {
           resolve()
         })

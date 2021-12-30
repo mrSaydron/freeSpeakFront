@@ -28,7 +28,6 @@ import BookService from '@/services/bookService'
 import { BookDto } from '@/model/bookDto'
 import { BookFilter } from '@/services/filters/bookFilter'
 import { SortValue, asc } from '@/util/sortValue'
-import { DefaultNamesEnum } from '@/model/enums/defaultNamesEnum'
 import FileService from '@/services/fileService'
 
 @Component({
@@ -37,6 +36,7 @@ import FileService from '@/services/fileService'
   }
 })
 export default class MyBooks extends Vue {
+  // todo переделать
   @Inject() readonly bookService!: BookService;
   @Inject() readonly fileService!: FileService;
 
@@ -44,14 +44,7 @@ export default class MyBooks extends Vue {
   public allElements = false
   public searchString = ''
   public books: BookDto[] = []
-  public bookFilter = new BookFilter(
-    undefined,
-    false,
-    undefined,
-    new SortValue<string>(undefined, asc),
-    undefined,
-    this.requestCount
-  )
+  public bookFilter = new BookFilter()
 
   public async mounted () {
     await this.retrieve()
@@ -60,10 +53,10 @@ export default class MyBooks extends Vue {
   @Watch('searchString')
   public async searchChange (common: string, oldCommon: string) {
     if (common && common !== '' && common.length >= 3) {
-      this.bookFilter.titleAuthorFilter = common
+      // this.bookFilter.titleAuthorFilter = common
       await this.retrieve()
     } else if (oldCommon && oldCommon !== '' && oldCommon.length >= 3) {
-      this.bookFilter.titleAuthorFilter = undefined
+      // this.bookFilter.titleAuthorFilter = undefined
       await this.retrieve()
     }
   }
@@ -71,21 +64,22 @@ export default class MyBooks extends Vue {
   public async next () {
     if (!this.allElements && this.books.length > 0) {
       const lastBook = this.books[this.books.length - 1]
-      if (this.bookFilter.titleSort) {
-        this.bookFilter.titleSort.maxValue = lastBook.title
+      if (this.bookFilter.sort) {
+        this.bookFilter.sort.maxValue = lastBook.title
       }
       await this.retrieve()
     }
   }
 
   public async retrieve (): Promise<void> {
-    const nextBooks = await this.bookService.retrieve(this.bookFilter)
+    const nextBooks: BookDto[] = await this.bookService.retrieve(this.bookFilter)
     nextBooks.forEach(book => {
-      const name = book.pictureName ? book.pictureName : DefaultNamesEnum.book
-      this.fileService.getUrl(name)
-        .then(res => {
-          book.pictureUrl = res
-        })
+      if (book.pictureId) {
+        this.fileService.getUrl(book.pictureId)
+          .then(res => {
+            book.pictureUrl = res
+          })
+      }
     })
     this.books = this.books.concat(nextBooks)
     this.allElements = this.books.length < this.requestCount

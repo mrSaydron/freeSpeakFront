@@ -44,7 +44,6 @@
               </v-list-item>
             </v-list>
           </v-menu>
-
           <v-text-field
             v-model="book.title"
             label="Название книги"
@@ -55,10 +54,9 @@
             v-model="book.author"
             label="Автор"
           ></v-text-field>
-          <v-text-field
-            v-model="book.source"
-            label="Источник"
-          ></v-text-field>
+          <text-tag-combobox
+            v-model="book.textTags"
+          ></text-tag-combobox>
         </v-col>
       </v-row>
       <v-row class="mt-3">
@@ -86,25 +84,25 @@
 import Component from 'vue-class-component'
 import { Inject, Vue } from 'vue-property-decorator'
 import BookService from '@/services/bookService'
-import { BookDto } from '@/model/bookDto'
+import { BookCreateDto } from '@/model/bookCreateDto'
 import FileService from '@/services/fileService'
-import { DefaultNamesEnum } from '@/model/enums/defaultNamesEnum'
+import TextTagService from '@/services/textTagService'
+import { TextTag, TextTagDto } from '@/model/textTagDto'
+import TextTagCombobox from '@/common/textTagCombobox.vue'
 
 @Component({
   components: {
+    TextTagCombobox
   }
 })
-export default class Library extends Vue {
+export default class BookCreate extends Vue {
   @Inject() readonly bookService!: BookService
   @Inject() readonly fileService!: FileService
+  @Inject() readonly textTagService!: TextTagService
 
-  public book: BookDto = new BookDto()
+  public book: BookCreateDto = new BookCreateDto()
   public valid = false
   public picture: File | undefined
-
-  public async mounted () {
-    this.book.pictureUrl = await this.fileService.getUrl(DefaultNamesEnum.book)
-  }
 
   public titleRules = [
     (v: string): boolean | string => !!v || 'Название книги обязательно к заполнению',
@@ -138,11 +136,10 @@ export default class Library extends Vue {
     const form: any = this.$refs.form
     if (form.validate()) {
       if (this.picture) {
-        this.book.pictureName = await this.fileService.savePicture(this.picture)
+        this.book.pictureId = await this.fileService.savePicture(this.picture)
       }
-      this.book.publicBook = true
       await this.bookService.create(this.book)
-      this.$router.push('/library')
+      this.$router.push('/')
     }
   }
 
@@ -151,8 +148,6 @@ export default class Library extends Vue {
    */
   public uploadPicture () {
     (this.$refs.inputFile as Vue & { click: () => void }).click()
-
-    // this.$refs.inputFile.click()
   }
 
   /**

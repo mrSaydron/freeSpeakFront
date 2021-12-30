@@ -1,30 +1,30 @@
-import { SortValue } from '@/util/sortValue'
+import { asc, SortValue } from '@/util/sortValue'
 import { FilterValues } from '@/util/filterValues'
 
 export class BookFilter {
+  public titleAuthor = new FilterValues<string>('titleAuthor')
+  public know = new FilterValues<number>('know')
+  public title = new FilterValues<string>('title', 'title')
+  public author = new FilterValues<string>('author', 'author')
+
+  public sort = new SortValue(this.title, undefined, asc)
+
+  /* eslint no-useless-constructor: "off" */
   constructor (
-    public titleAuthorFilter?: string,
-    public orPublicBookFilter?: boolean,
-    public knowFilter?: FilterValues<number>,
-
-    public titleSort?: SortValue<string>,
-    public authorSort?: SortValue<string>,
-
-    public requestCount?: number
+    public requestCount = 20
   ) {
-    this.requestCount = requestCount || 20
-    this.knowFilter = knowFilter || new FilterValues<number>('knowFilter')
   }
 
   addAppend (params: URLSearchParams): void {
-    if (this.titleAuthorFilter) {
-      params.append('titleAuthorFilter.contains', this.titleAuthorFilter)
-    }
-    if (this.orPublicBookFilter) {
-      params.append('orPublicBookFilter.equals', this.orPublicBookFilter + '')
-    }
-    if (this.knowFilter) {
-      this.knowFilter.addAppends(params)
+    for (const key in this) {
+      if (this[key] !== undefined && this[key] !== null
+      ) {
+        if (key === 'requestCount' && this.requestCount) {
+          params.append('size', this.requestCount.toString())
+        } else {
+          (this[key] as any).addAppends(params)
+        }
+      }
     }
   }
 }
