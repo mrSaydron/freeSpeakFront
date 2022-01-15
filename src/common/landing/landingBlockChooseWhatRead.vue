@@ -21,6 +21,7 @@
           alt="Изображение: девушка на лестнице пытается дотянуться до книги"
           contain
           height="85vh"
+          src="/picture/cravingForABook.png"
         ></v-img>
       </v-col>
     </v-row>
