@@ -16,10 +16,6 @@
       v-if="checkSeeMore()"
       :gallery-item="galleryItem"
     ></gallery-item-see-more>
-    <gallery-item-see-more
-      v-if="checkSeeMore()"
-      :gallery-item="galleryItem"
-    ></gallery-item-see-more>
     <gallery-item-user-dictionary
       v-if="checkUserDictionary()"
       :gallery-item="galleryItem"

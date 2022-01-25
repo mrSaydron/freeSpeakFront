@@ -3,11 +3,10 @@
     class="ma-2"
     height="250"
     width="200"
-    elevation="1"
+    elevation="0"
     @click="itemClick"
   >
     <v-img
-      :src=galleryItem.pictureUrl
       height="200"
     ></v-img>
     <v-card-title>
