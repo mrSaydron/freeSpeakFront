@@ -96,6 +96,7 @@ export default class CardsLearn extends Vue {
    * - если слов меньше 10, то загужаем следующие слова
    * - слово перемещаем на десять карточек назад
    * - если закончились "жизни" то все новые слова отбрасываются
+   * - если слово в "нулевой коробке" то меняем ее на первую
    */
   public async answerFail (): Promise<void> {
     this.userWordService.answerFail(this.card!)
@@ -116,6 +117,10 @@ export default class CardsLearn extends Vue {
 
     if (this.leftHearts === 0) {
       this.cards = this.cards.filter(card => card.answerFailCount !== 0)
+    }
+
+    if (this.card && this.card.wordProgress && this.card.wordProgress.boxNumber === 0) {
+      this.card.wordProgress.boxNumber = 1
     }
   }
 
