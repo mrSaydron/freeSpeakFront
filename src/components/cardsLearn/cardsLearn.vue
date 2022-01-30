@@ -25,7 +25,7 @@
         </v-card>
         <word-card-direct
           v-if="cardType === 'direct'"
-          :userWord="card.userWord"
+          :card="card"
           @not-remember="answerFail"
           @remember="answerSuccess"
           @know="knowWord"
@@ -56,12 +56,11 @@ export default class CardsLearn extends Vue {
   public cards: Card[] = []
   public leftHearts = 0
 
-  public requestCount = 20
+  public requestCount = 10
   public allElements = false
   public wordSort?: SortValue
 
   public async mounted () {
-    console.log('learn mounted')
     this.leftHearts = await this.userWordService.getLeftHearts()
     if (this.leftHearts > 0) {
       const words = await this.userWordService.getWordOfDay()
@@ -72,8 +71,6 @@ export default class CardsLearn extends Vue {
       if (this.cards.length > 0) {
         this.card = this.cards[0]
       }
-      console.log('card')
-      console.log(this.card)
     }
   }
 
@@ -100,6 +97,8 @@ export default class CardsLearn extends Vue {
    */
   public async answerFail (): Promise<void> {
     this.userWordService.answerFail(this.card!)
+
+    this.card!.answerFailCount++
     const currentCard = this.cards.shift()
     if (this.cards.length < 10) {
       await this.nextNewWords()
@@ -113,14 +112,9 @@ export default class CardsLearn extends Vue {
 
     this.leftHearts--
     if (this.leftHearts < 0) this.leftHearts = 0
-    this.card.answerFailCount++
 
     if (this.leftHearts === 0) {
       this.cards = this.cards.filter(card => card.answerFailCount !== 0)
-    }
-
-    if (this.card && this.card.wordProgress && this.card.wordProgress.boxNumber === 0) {
-      this.card.wordProgress.boxNumber = 1
     }
   }
 
@@ -131,23 +125,30 @@ export default class CardsLearn extends Vue {
    * - проверяем остались ли слова
    */
   public async answerSuccess (): Promise<void> {
-    this.userWordService.answerSuccess(this.card!)
+    console.log('answerSuccess')
+    await this.userWordService.answerSuccess(this.card!)
+    console.log('userWordService.answerSuccess')
+
     this.cards.shift()
+    if (this.cards.length === 0) {
+      await this.nextNewWords()
+    }
     if (this.cards.length > 0) {
       this.card = this.cards[0]
     } else {
       this.card = null
-      await this.nextNewWords()
     }
+    console.log(this.cards)
   }
 
   /**
    * Закончились слова, загружаем следующий блок еще не изученных слов
    */
   public async nextNewWords (): Promise<void> {
-    console.log('learn next')
+    console.log('nextNewWords')
     if (!this.allElements && this.leftHearts > 0) {
       const words = await this.userWordService.nextWords()
+      console.log(words)
       this.allElements = words.length < this.requestCount
       this.cards = this.cards.concat(Card.transform(words))
       console.log(this.cards)
@@ -159,13 +160,15 @@ export default class CardsLearn extends Vue {
    */
   public async knowWord (): Promise<void> {
     if (this.card && this.card.userWord.word && this.card.userWord.word.id) {
-      this.userWordService.knowWord(this.card.userWord.word.id)
+      await this.userWordService.knowWord(this.card.userWord.word.id)
       this.cards.shift()
+      if (this.cards.length === 0) {
+        await this.nextNewWords()
+      }
       if (this.cards.length > 0) {
         this.card = this.cards[0]
       } else {
         this.card = null
-        await this.nextNewWords()
       }
     }
   }

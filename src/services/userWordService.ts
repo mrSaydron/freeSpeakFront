@@ -234,6 +234,9 @@ export default class UserWordService {
   public async answerFail (card: Card): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       axios.put(`${baseApiUrl}/answer-fail?userWordId=${card.id}&type=${card.wordProgress.type}`)
+        .then(res => {
+          resolve(res.data)
+        })
         .catch(err => {
           reject(err)
         })
@@ -246,6 +249,9 @@ export default class UserWordService {
   public async answerSuccess (card: Card): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       axios.put(`${baseApiUrl}/answer-success?userWordId=${card.id}&type=${card.wordProgress.type}`)
+        .then(res => {
+          resolve(res.data)
+        })
         .catch(err => {
           reject(err)
         })
