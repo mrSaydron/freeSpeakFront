@@ -1,5 +1,5 @@
 <template>
-  <v-card v-id="userWord && userWord.word">
+  <v-card v-if="card && card.userWord && card.userWord.word && word">
     <v-card-title class="justify-center">
       {{ word.word }}
       <v-icon
@@ -92,9 +92,8 @@ import Component from 'vue-class-component'
 import { Inject, Prop, Vue, Watch } from 'vue-property-decorator'
 import { WordDto } from '@/model/wordDto'
 import FileService from '@/services/fileService'
-import { UserWordDto } from '@/model/userWordDto'
-import { CardTypeEnum } from '@/model/enums/cardTypeEnum'
 import { Constants } from '@/model/enums/constants'
+import { Card } from '@/model/card'
 
 /**
  * Карточка для изучения слова. Прямой перевод, иностронное слово -> перевод
@@ -106,24 +105,24 @@ import { Constants } from '@/model/enums/constants'
 export default class WordCardDirect extends Vue {
   @Inject() readonly fileService!: FileService
 
-  @Prop(Object) readonly userWord: UserWordDto | undefined
+  @Prop(Object) readonly card: Card | undefined
 
   public word: WordDto | null = null
   public isTurn = false
 
   public mounted (): void {
     console.log('card mounted')
-    console.log(this.userWord)
-    if (this.userWord) {
-      this.wordChange(this.userWord)
+    console.log(this.card)
+    if (this.card) {
+      this.wordChange(this.card)
     }
   }
 
-  @Watch('userWord')
-  public async wordChange (userWord: UserWordDto): Promise<void> {
-    if (userWord.word) {
+  @Watch('card')
+  public async wordChange (card: Card): Promise<void> {
+    if (card.userWord.word) {
       this.isTurn = false
-      this.word = userWord.word
+      this.word = card.userWord.word
       await this.play()
     }
   }
@@ -134,6 +133,7 @@ export default class WordCardDirect extends Vue {
         this.word.audioUrl = await this.fileService.getUrl(this.word.audioId)
       }
       const audio = new Audio(this.word.audioUrl)
+      // audio.muted = true
       await audio.play()
     }
   }
@@ -158,15 +158,11 @@ export default class WordCardDirect extends Vue {
   }
 
   /**
-   * Если слово можно сразу перевести в последнюю коробку
+   * Если слово можно сразу перенести в последнюю коробку
    */
   get canToKnow (): boolean {
-    let result = false
-    if (this.userWord && this.userWord.wordProgresses) {
-      const find = this.userWord.wordProgresses.find(progress => progress.type === CardTypeEnum.direct)
-      result = this.userWord.fromTest || (!!find && find.boxNumber === Constants.PRELIMINARY_BOX_NUMBER)
-    }
-    return result
+    return this.card !== undefined && this.card.answerFailCount === 0 &&
+      (this.card.userWord.fromTest || this.card.wordProgress.boxNumber === Constants.PRELIMINARY_BOX_NUMBER)
   }
 }
 </script>
