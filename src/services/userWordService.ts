@@ -46,6 +46,9 @@ export default class UserWordService {
   public async addWord (wordId: number): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       axios.put(`${baseApiUrl}/add-word/${wordId}`)
+        .then(res => {
+          resolve(res.data)
+        })
         .catch(err => {
           reject(err)
         })
@@ -58,6 +61,9 @@ export default class UserWordService {
   public async eraseWord (wordId: number): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       axios.put(`${baseApiUrl}/erase-word/${wordId}`)
+        .then(res => {
+          resolve(res.data)
+        })
         .catch(err => {
           reject(err)
         })
@@ -70,6 +76,9 @@ export default class UserWordService {
   public async eraseWords (wordIds: (number | undefined)[]): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       axios.put(`${baseApiUrl}/erase-words`, wordIds)
+        .then(res => {
+          resolve(res.data)
+        })
         .catch(err => {
           reject(err)
         })
@@ -89,6 +98,9 @@ export default class UserWordService {
     knowFilter.addAppend(params)
     return new Promise<any>((resolve, reject) => {
       axios.put(`${baseApiUrl}/erase-all-words?${params.toString()}`)
+        .then(res => {
+          resolve(res.data)
+        })
         .catch(err => {
           reject(err)
         })
@@ -101,6 +113,9 @@ export default class UserWordService {
   public async knowWord (wordId: number): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       axios.put(`${baseApiUrl}/know-word/${wordId}`)
+        .then(res => {
+          resolve(res.data)
+        })
         .catch(err => {
           reject(err)
         })
@@ -113,6 +128,9 @@ export default class UserWordService {
   public async knowWords (wordIds: (number | undefined)[]): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       axios.put(`${baseApiUrl}/know-words`, wordIds)
+        .then(res => {
+          resolve(res.data)
+        })
         .catch(err => {
           reject(err)
         })
@@ -132,6 +150,9 @@ export default class UserWordService {
     knowFilter.addAppend(params)
     return new Promise<any>((resolve, reject) => {
       axios.put(`${baseApiUrl}/know-all-words?${params.toString()}`)
+        .then(res => {
+          resolve(res.data)
+        })
         .catch(err => {
           reject(err)
         })
@@ -144,6 +165,9 @@ export default class UserWordService {
   public async removeWord (wordId: number): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       axios.put(`${baseApiUrl}/remove-word/${wordId}`)
+        .then(res => {
+          resolve(res.data)
+        })
         .catch(err => {
           reject(err)
         })
@@ -156,6 +180,9 @@ export default class UserWordService {
   public async removeWords (wordIds: (number | undefined)[]): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       axios.put(`${baseApiUrl}/remove-words`, wordIds)
+        .then(res => {
+          resolve(res.data)
+        })
         .catch(err => {
           reject(err)
         })
@@ -175,6 +202,9 @@ export default class UserWordService {
     knowFilter.addAppend(params)
     return new Promise<any>((resolve, reject) => {
       axios.put(`${baseApiUrl}/remove-all-words?${params.toString()}`)
+        .then(res => {
+          resolve(res.data)
+        })
         .catch(err => {
           reject(err)
         })
