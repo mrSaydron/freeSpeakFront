@@ -22,23 +22,39 @@
         >
           <v-col md="3" class="text-right">
             <v-btn
+              v-if="canToKnow"
               text
               color="error"
               @click="notRemember"
-              @keypress.left="notRemember"
             >
-              <v-icon class="mr-1">
-                mdi-arrow-left
-              </v-icon>
+              <v-icon class="mr-1">mdi-arrow-left</v-icon>
+              УЧИТЬ
+            </v-btn>
+            <v-btn
+              v-else
+              text
+              color="error"
+              @click="notRemember"
+            >
+              <v-icon class="mr-1">mdi-arrow-left</v-icon>
               НЕ ПОМНЮ
             </v-btn>
           </v-col>
           <v-col md="3" class="text-center">
             <v-btn
+              v-if="isTurn"
               text
               @click="turn"
             >
-              ПЕРЕВЕРНУТЬ
+              ПЕРЕВОД
+              <v-icon class="ml-1">mdi-arrow-up</v-icon>
+            </v-btn>
+            <v-btn
+              v-else
+              text
+              @click="turn"
+            >
+              СКРЫТЬ ПЕРЕВОД
               <v-icon class="ml-1">mdi-arrow-up</v-icon>
             </v-btn>
           </v-col>
@@ -46,39 +62,18 @@
             <v-btn
               v-if="canToKnow"
               text
-              @click="remember"
-              @keypress.right="remember"
+              @click="know"
             >
-              ИЗУЧАТЬ
+              ЗНАЮ
               <v-icon class="ml-1">mdi-arrow-right</v-icon>
             </v-btn>
             <v-btn
               v-else
               text
               @click="remember"
-              @keypress.right="remember"
             >
               ПОМНЮ
-              <v-icon class="ml-1">
-                mdi-arrow-right
-              </v-icon>
-            </v-btn>
-          </v-col>
-        </v-row>
-        <v-row
-          justify="center"
-          v-if="canToKnow"
-        >
-          <v-col md="3" class="text-center">
-            <v-btn
-              text
-              class="text-center"
-              @click="know"
-            >
-              ЗНАЮ
-              <v-icon class="ml-1">
-                mdi-arrow-down
-              </v-icon>
+              <v-icon class="ml-1">mdi-arrow-right</v-icon>
             </v-btn>
           </v-col>
         </v-row>
