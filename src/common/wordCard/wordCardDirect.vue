@@ -46,7 +46,7 @@
               text
               @click="turn"
             >
-              ПЕРЕВОД
+              СКРЫТЬ ПЕРЕВОД
               <v-icon class="ml-1">mdi-arrow-up</v-icon>
             </v-btn>
             <v-btn
@@ -54,7 +54,7 @@
               text
               @click="turn"
             >
-              СКРЫТЬ ПЕРЕВОД
+              ПЕРЕВОД
               <v-icon class="ml-1">mdi-arrow-up</v-icon>
             </v-btn>
           </v-col>
