@@ -21,8 +21,7 @@
 
 <script lang="ts">
 import Component from 'vue-class-component'
-import { Inject, Prop, Vue, Watch } from 'vue-property-decorator'
-import { BookSentenceDto } from '@/model/bookSentenceDto'
+import { Inject, Prop, Vue } from 'vue-property-decorator'
 import { WordDto } from '@/model/wordDto'
 import WordService from '@/services/wordService'
 import FileService from '@/services/fileService'
@@ -47,12 +46,13 @@ export default class BookText extends Vue {
   public wordDto: WordDto = {}
   public word = ''
   public translate = ''
-  public partOfSpeech = ''
   public userHas = false
   public bookmarkSentenceId?: number
+  public firstReset = false // должен отработать только при загрузке книги
 
   public updated (): void {
-    if (this.bookSentencesUnion) {
+    if (this.bookSentencesUnion && !this.firstReset) {
+      this.firstReset = true
       this.bookmarkReset(this.bookSentencesUnion)
     }
   }
@@ -93,29 +93,36 @@ export default class BookText extends Vue {
     }
   }
 
+  /**
+   * Просмотр перевода слова
+   * @param wordId
+   */
   public wordClick (wordId: number): void {
     this.wordId = wordId
     this.wordModal = true
   }
 
+  /**
+   * Закрытие окна сереводом слова
+   */
   public modalClose (): void {
     this.wordModal = false
   }
 
   public sentenceIntersect (entries: any, observer: any, isIntersecting: any): void {
-    if (this.bookmarkSentenceId && entries.length > 0) {
+    if (this.bookmarkSentenceId && this.bookSentencesUnion && entries.length > 0) {
       const sentenceIdString = entries[0].target.id.substring(12)
       if (sentenceIdString) {
         const sentenceId = parseInt(sentenceIdString)
         if (isIntersecting) {
           if (sentenceId + 1 === this.bookmarkSentenceId) {
             this.bookmarkSentenceId = sentenceId
-            localStorage.setItem('book_' + this.bookSentencesUnion!.bookDto.id, this.bookmarkSentenceId.toString())
+            localStorage.setItem('book_' + this.bookSentencesUnion.bookDto.id, this.bookmarkSentenceId.toString())
           }
         } else {
           if (sentenceId === this.bookmarkSentenceId) {
             this.bookmarkSentenceId = this.bookmarkSentenceId + 1
-            localStorage.setItem('book_' + this.bookSentencesUnion!.bookDto.id, this.bookmarkSentenceId.toString())
+            localStorage.setItem('book_' + this.bookSentencesUnion.bookDto.id, this.bookmarkSentenceId.toString())
           }
         }
       }
@@ -125,10 +132,4 @@ export default class BookText extends Vue {
 </script>
 
 <style scoped>
-span.pre-wrap {
-  white-space: pre-wrap;
-}
-span.hover-span:hover {
-  background: #f8b8b8;
-}
 </style>
