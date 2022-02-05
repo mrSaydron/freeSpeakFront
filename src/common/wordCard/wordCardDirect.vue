@@ -156,8 +156,9 @@ export default class WordCardDirect extends Vue {
    * Если слово можно сразу перенести в последнюю коробку
    */
   get canToKnow (): boolean {
-    return this.card !== undefined && this.card.answerFailCount === 0 &&
-      (this.card.userWord.fromTest || this.card.wordProgress.boxNumber === Constants.PRELIMINARY_BOX_NUMBER)
+    return this.card !== undefined &&
+      this.card.answerFailCount === 0 &&
+      this.card.wordProgress.boxNumber === Constants.PRELIMINARY_BOX_NUMBER
   }
 }
 </script>

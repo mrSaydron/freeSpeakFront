@@ -43,6 +43,7 @@ import UserWordService from '@/services/userWordService'
 import { SortValue } from '@/util/sortValue'
 import { Card } from '@/model/card'
 import { UserWordDto } from '@/model/userWordDto'
+import { Constants } from '@/model/enums/constants'
 
 @Component({
   components: {
@@ -96,7 +97,7 @@ export default class CardsLearn extends Vue {
    * - если слово в "нулевой коробке" то меняем ее на первую
    */
   public async answerFail (): Promise<void> {
-    this.userWordService.answerFail(this.card!)
+    await this.userWordService.answerFail(this.card!)
 
     this.card!.answerFailCount++
     const currentCard = this.cards.shift()
@@ -125,9 +126,7 @@ export default class CardsLearn extends Vue {
    * - проверяем остались ли слова
    */
   public async answerSuccess (): Promise<void> {
-    console.log('answerSuccess')
     await this.userWordService.answerSuccess(this.card!)
-    console.log('userWordService.answerSuccess')
 
     this.cards.shift()
     if (this.cards.length === 0) {
@@ -138,20 +137,19 @@ export default class CardsLearn extends Vue {
     } else {
       this.card = null
     }
-    console.log(this.cards)
   }
 
   /**
    * Закончились слова, загружаем следующий блок еще не изученных слов
    */
   public async nextNewWords (): Promise<void> {
-    console.log('nextNewWords')
     if (!this.allElements && this.leftHearts > 0) {
-      const words = await this.userWordService.nextWords()
-      console.log(words)
+      const excludeWordIds: number[] = this.cards
+        .filter(card => card.wordProgress.boxNumber === Constants.PRELIMINARY_BOX_NUMBER)
+        .map(card => card.userWord.word!.id!)
+      const words = await this.userWordService.nextWords(excludeWordIds)
       this.allElements = words.length < this.requestCount
       this.cards = this.cards.concat(Card.transform(words))
-      console.log(this.cards)
     }
   }
 
@@ -159,17 +157,16 @@ export default class CardsLearn extends Vue {
    * Пользователь знает слово, оно переносится сразу в последнюю коробку
    */
   public async knowWord (): Promise<void> {
-    if (this.card && this.card.userWord.word && this.card.userWord.word.id) {
-      await this.userWordService.knowWord(this.card.userWord.word.id)
-      this.cards.shift()
-      if (this.cards.length === 0) {
-        await this.nextNewWords()
-      }
-      if (this.cards.length > 0) {
-        this.card = this.cards[0]
-      } else {
-        this.card = null
-      }
+    await this.userWordService.knowWord(this.card!.userWord.word!.id!)
+
+    this.cards.shift()
+    if (this.cards.length === 0) {
+      await this.nextNewWords()
+    }
+    if (this.cards.length > 0) {
+      this.card = this.cards[0]
+    } else {
+      this.card = null
     }
   }
 }

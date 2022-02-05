@@ -245,9 +245,12 @@ export default class UserWordService {
   /**
    * Запрашивает следующие слова на изучения из словаря пользователя
    */
-  public async nextWords (): Promise<UserWordDto[]> {
+  public async nextWords (excludeWordIds: number[]): Promise<UserWordDto[]> {
     return new Promise<UserWordDto[]>((resolve, reject) => {
-      axios.get(`${baseApiUrl}/next-words`)
+      const params = new URLSearchParams()
+      params.append('exclude-word-ids', excludeWordIds.join())
+
+      axios.get(`${baseApiUrl}/next-words?${params.toString()}`)
         .then(res => {
           res.data.forEach((item: UserWordDto) => UserWordDto.fill(item))
           resolve(res.data)
