@@ -59,13 +59,12 @@ import { Constants } from '@/model/enums/constants'
   }
 })
 export default class SentenceWord extends Vue {
-  @Prop(Object) readonly wordModal: boolean | undefined
-  @Prop(Object) readonly wordId: number | undefined
+  @Prop(Boolean) readonly wordModal: boolean | undefined
+  @Prop(Number) readonly wordId: number | undefined
 
   @Inject() readonly userWordService!: UserWordService
   @Inject() readonly fileService!: FileService
 
-  public PRELIMINARY_BOX_NUMBER = Constants.PRELIMINARY_BOX_NUMBER
   public START_BOX_NUMBER = Constants.START_BOX_NUMBER
   public KNOW_BOX_NUMBER = Constants.KNOW_BOX_NUMBER
 
