@@ -10,7 +10,6 @@
         >
           <h1>{{book.title}}</h1>
           <h4 v-if="book.author">{{book.author}}</h4>
-          <h4 v-if="book.source">{{book.source}}</h4>
         </v-col>
       </v-row>
       <v-row
@@ -104,7 +103,6 @@ export default class Book extends Vue {
 
   public book: BookDto = {}
   public dictionary: DictionaryDto = {}
-  public tab = 0
   public bookSentences: BookSentenceDto[] = []
   public isReading = false
   public bookSentencesUnion: BookSentenceUnionDto | null = null
@@ -152,3 +150,6 @@ export default class Book extends Vue {
   }
 }
 </script>
+
+<style scoped>
+</style>

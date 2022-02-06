@@ -49,6 +49,7 @@ export default class BookText extends Vue {
   public userHas = false
   public bookmarkSentenceId?: number
   public firstReset = false // должен отработать только при загрузке книги
+  public directUp = true // угадывание направление скрола
 
   public updated (): void {
     if (this.bookSentencesUnion && !this.firstReset) {
@@ -109,20 +110,35 @@ export default class BookText extends Vue {
     this.wordModal = false
   }
 
+  /**
+   * Отслеживает видимость предложений и созраняет его локальном хранилище
+   * Работает, но не очень точно сохраняет последнюю позицию
+   */
   public sentenceIntersect (entries: any, observer: any, isIntersecting: any): void {
     if (this.bookmarkSentenceId && this.bookSentencesUnion && entries.length > 0) {
       const sentenceIdString = entries[0].target.id.substring(12)
       if (sentenceIdString) {
         const sentenceId = parseInt(sentenceIdString)
         if (isIntersecting) {
-          if (sentenceId + 1 === this.bookmarkSentenceId) {
+          // элемент скрылся
+          if (!this.directUp) {
+            // думаем что движемся вниз (но это не точно)
+            // примем скрывшийся элемент за верхнюю строку
             this.bookmarkSentenceId = sentenceId
             localStorage.setItem('book_' + this.bookSentencesUnion.bookDto.id, this.bookmarkSentenceId.toString())
           }
         } else {
-          if (sentenceId === this.bookmarkSentenceId) {
-            this.bookmarkSentenceId = this.bookmarkSentenceId + 1
+          // элемент появился
+          // определеним направление
+          if (sentenceId < this.bookmarkSentenceId) {
+            // движемя вверх
+            this.directUp = true
+            // можно сохранить
+            this.bookmarkSentenceId = sentenceId
             localStorage.setItem('book_' + this.bookSentencesUnion.bookDto.id, this.bookmarkSentenceId.toString())
+          } else {
+            // движемся вниз
+            this.directUp = false
           }
         }
       }
