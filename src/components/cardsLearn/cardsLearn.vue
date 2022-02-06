@@ -96,8 +96,14 @@ export default class CardsLearn extends Vue {
    */
   public async answerFail (): Promise<void> {
     await this.userWordService.answerFail(this.card!)
+    this.leftHearts--
+    if (this.leftHearts < 0) this.leftHearts = 0
 
     this.card!.answerFailCount++
+    if (this.leftHearts === 0) {
+      this.cards = this.cards.filter(card => card.answerFailCount !== 0)
+    }
+
     const currentCard = this.cards.shift()
     if (this.cards.length < 10) {
       await this.nextNewWords()
@@ -108,13 +114,6 @@ export default class CardsLearn extends Vue {
       this.cards.push(currentCard!)
     }
     this.card = this.cards[0]
-
-    this.leftHearts--
-    if (this.leftHearts < 0) this.leftHearts = 0
-
-    if (this.leftHearts === 0) {
-      this.cards = this.cards.filter(card => card.answerFailCount !== 0)
-    }
   }
 
   /**
