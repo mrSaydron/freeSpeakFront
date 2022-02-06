@@ -63,15 +63,13 @@ export default class CardsLearn extends Vue {
 
   public async mounted () {
     this.leftHearts = await this.userWordService.getLeftHearts()
-    if (this.leftHearts > 0) {
-      const words = await this.userWordService.getWordOfDay()
-      this.cards = Card.transform(words)
-      if (this.cards.length === 0) {
-        await this.nextNewWords()
-      }
-      if (this.cards.length > 0) {
-        this.card = this.cards[0]
-      }
+    const words = await this.userWordService.getWordOfDay()
+    this.cards = Card.transform(words)
+    if (this.cards.length === 0) {
+      await this.nextNewWords()
+    }
+    if (this.cards.length > 0) {
+      this.card = this.cards[0]
     }
   }
 
