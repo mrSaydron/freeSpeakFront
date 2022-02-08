@@ -130,7 +130,9 @@ export default class CardsLearn extends Vue {
 
     this.card!.answerFailCount++
     if (this.leftHearts === 0) {
-      this.cards = this.cards.filter(card => card.answerFailCount !== 0)
+      this.cards = this.cards.filter(card =>
+        card.wordProgress.boxNumber !== Constants.PRELIMINARY_BOX_NUMBER ||
+        card.answerFailCount !== 0)
     }
 
     const currentCard = this.cards.shift()
