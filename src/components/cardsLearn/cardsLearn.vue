@@ -13,6 +13,16 @@
         >
         </v-rating>
       </v-col>
+      <v-col>
+        <cards-statistic
+          class="text-right"
+          :success-cards="successCards"
+          :fail-cards="failCards"
+          :left-cards="leftCards"
+          :new-cards="newCards"
+          :know-cards="knowCards"
+        />
+      </v-col>
     </v-row>
     <v-row>
       <v-col>
@@ -37,17 +47,19 @@
 
 <script lang="ts">
 import Component from 'vue-class-component'
-import { Inject, Vue } from 'vue-property-decorator'
+import { Inject, Prop, Vue } from 'vue-property-decorator'
 import WordCardDirect from '@/common/wordCard/wordCardDirect.vue'
 import UserWordService from '@/services/userWordService'
 import { SortValue } from '@/util/sortValue'
 import { Card } from '@/model/card'
 import { UserWordDto } from '@/model/userWordDto'
 import { Constants } from '@/model/enums/constants'
+import CardsStatistic from '@/common/wordCard/cardsStatistic.vue'
 
 @Component({
   components: {
-    WordCardDirect
+    WordCardDirect,
+    CardsStatistic
   }
 })
 export default class CardsLearn extends Vue {
@@ -61,10 +73,18 @@ export default class CardsLearn extends Vue {
   public allElements = false
   public wordSort?: SortValue
 
+  public successCards = 0 // успешных ответов
+  public failCards = 0 // ответов с ошибкой
+  public leftCards = 0 // карточек осталось
+  public newCards = 0 // новых карточек
+  public knowCards = 0 // карточек отмеченных как знакомое слово
+
   public async mounted () {
     this.leftHearts = await this.userWordService.getLeftHearts()
     const words = await this.userWordService.getWordOfDay()
     this.cards = Card.transform(words)
+    this.leftCards = this.cards.length
+
     if (this.cards.length === 0) {
       await this.nextNewWords()
     }
@@ -99,6 +119,15 @@ export default class CardsLearn extends Vue {
     this.leftHearts--
     if (this.leftHearts < 0) this.leftHearts = 0
 
+    if (this.card?.answerFailCount === 0) {
+      if (this.card.wordProgress.boxNumber === Constants.PRELIMINARY_BOX_NUMBER) {
+        this.newCards++
+        this.leftCards++
+      } else {
+        this.failCards++
+      }
+    }
+
     this.card!.answerFailCount++
     if (this.leftHearts === 0) {
       this.cards = this.cards.filter(card => card.answerFailCount !== 0)
@@ -124,6 +153,11 @@ export default class CardsLearn extends Vue {
    */
   public async answerSuccess (): Promise<void> {
     await this.userWordService.answerSuccess(this.card!)
+
+    if (this.card?.answerFailCount === 0) {
+      this.successCards++
+    }
+    this.leftCards--
 
     this.cards.shift()
     if (this.cards.length === 0) {
@@ -165,6 +199,8 @@ export default class CardsLearn extends Vue {
     } else {
       this.card = null
     }
+
+    this.knowCards++
   }
 }
 </script>
