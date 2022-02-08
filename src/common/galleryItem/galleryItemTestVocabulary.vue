@@ -3,7 +3,7 @@
     class="ma-2"
     height="250"
     width="200"
-    elevation="0"
+    flat
     @click="itemClick"
   >
     <v-img

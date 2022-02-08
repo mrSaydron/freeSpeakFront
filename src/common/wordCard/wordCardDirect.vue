@@ -1,83 +1,95 @@
 <template>
-  <v-card v-if="card && card.userWord && card.userWord.word && word">
-    <v-card-title class="justify-center">
-      {{ word.word }}
-      <v-icon
-        class="mr-1"
-        @click="play"
-      >
-        mdi-volume-high
-      </v-icon>
-    </v-card-title>
+  <v-card
+    class="d-flex flex-column"
+    v-if="card && card.userWord && card.userWord.word && word"
+  >
+    <!-- первая строка -->
+    <v-container>
+      <v-row>
+        <v-col cols="4"></v-col>
+        <v-col cols="4">
+          <v-card-title class="justify-center">
+            {{ word.word }}
+            <v-icon
+              class="mr-1"
+              @click="play"
+            >
+              mdi-volume-high
+            </v-icon>
+          </v-card-title>
+        </v-col>
+        <v-col cols="4">
+          <v-rating
+            class="text-right"
+            length="7"
+            :value="card.wordProgress.boxNumber"
+            small
+            readonly
+          ></v-rating>
+        </v-col>
+      </v-row>
+    </v-container>
+
+    <!-- вторая строка -->
     <v-card-text class="text-center">
       <div v-if="isTurn">
         {{ word.translate }}
       </div>
       {{ word.partOfSpeechNote }}
     </v-card-text>
-    <v-card-actions>
-      <v-container>
-        <v-row
-          justify="center"
-        >
-          <v-col md="3" class="text-right">
-            <v-btn
-              v-if="canToKnow"
-              text
-              color="error"
-              @click="notRemember"
-            >
-              <v-icon class="mr-1">mdi-arrow-left</v-icon>
-              УЧИТЬ
-            </v-btn>
-            <v-btn
-              v-else
-              text
-              color="error"
-              @click="notRemember"
-            >
-              <v-icon class="mr-1">mdi-arrow-left</v-icon>
-              НЕ ПОМНЮ
-            </v-btn>
-          </v-col>
-          <v-col md="3" class="text-center">
-            <v-btn
-              v-if="isTurn"
-              text
-              @click="turn"
-            >
-              СКРЫТЬ ПЕРЕВОД
-              <v-icon class="ml-1">mdi-arrow-up</v-icon>
-            </v-btn>
-            <v-btn
-              v-else
-              text
-              @click="turn"
-            >
-              ПЕРЕВОД
-              <v-icon class="ml-1">mdi-arrow-up</v-icon>
-            </v-btn>
-          </v-col>
-          <v-col md="3" class="text-left">
-            <v-btn
-              v-if="canToKnow"
-              text
-              @click="know"
-            >
-              ЗНАЮ
-              <v-icon class="ml-1">mdi-arrow-right</v-icon>
-            </v-btn>
-            <v-btn
-              v-else
-              text
-              @click="remember"
-            >
-              ПОМНЮ
-              <v-icon class="ml-1">mdi-arrow-right</v-icon>
-            </v-btn>
-          </v-col>
-        </v-row>
-      </v-container>
+
+    <!-- третья строка -->
+    <v-card-actions class="d-flex justify-center">
+      <v-btn
+        v-if="canToKnow"
+        text
+        color="error"
+        @click="notRemember"
+      >
+        <v-icon class="mr-1">mdi-arrow-left</v-icon>
+        УЧИТЬ
+      </v-btn>
+      <v-btn
+        v-else
+        text
+        color="error"
+        @click="notRemember"
+      >
+        <v-icon class="mr-1">mdi-arrow-left</v-icon>
+        НЕ ПОМНЮ
+      </v-btn>
+      <v-btn
+        v-if="isTurn"
+        text
+        @click="turn"
+      >
+        СКРЫТЬ ПЕРЕВОД
+        <v-icon class="ml-1">mdi-arrow-up</v-icon>
+      </v-btn>
+      <v-btn
+        v-else
+        text
+        @click="turn"
+      >
+        ПЕРЕВОД
+        <v-icon class="ml-1">mdi-arrow-up</v-icon>
+      </v-btn>
+      <v-btn
+        v-if="canToKnow"
+        text
+        @click="know"
+      >
+        ЗНАЮ
+        <v-icon class="ml-1">mdi-arrow-right</v-icon>
+      </v-btn>
+      <v-btn
+        v-else
+        text
+        @click="remember"
+      >
+        ПОМНЮ
+        <v-icon class="ml-1">mdi-arrow-right</v-icon>
+      </v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -159,6 +171,17 @@ export default class WordCardDirect extends Vue {
     return this.card !== undefined &&
       this.card.answerFailCount === 0 &&
       this.card.wordProgress.boxNumber === Constants.PRELIMINARY_BOX_NUMBER
+  }
+
+  /**
+   * Возвращает уровень знания для карточки
+   */
+  get getKnow (): number {
+    let know = 1
+    if (this.card && this.card.wordProgress && this.card.wordProgress.boxNumber) {
+      know = this.card.wordProgress.boxNumber
+    }
+    return know
   }
 }
 </script>
