@@ -28,12 +28,12 @@
         </v-row>
         <v-row>
           <v-col class="text-center">
-            <v-btn>Зарегистрироваться</v-btn>
+            <v-btn to="/register">Зарегистрироваться</v-btn>
           </v-col>
         </v-row>
         <v-row>
           <v-col class="text-center">
-            <v-btn>Войти</v-btn>
+            <v-btn to="/login-form">Войти</v-btn>
           </v-col>
         </v-row>
       </v-col>
