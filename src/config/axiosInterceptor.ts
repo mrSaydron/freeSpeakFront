@@ -1,4 +1,6 @@
 import axios from 'axios'
+import loginForm from '@/components/account/loginForm.vue'
+import moment from 'moment'
 
 const TIMEOUT = 1000000
 const onRequestSuccess = (config: any) => {
@@ -9,6 +11,7 @@ const onRequestSuccess = (config: any) => {
     }
     config.headers.Authorization = `Bearer ${token}`
   }
+  config.headers.Localtime = moment().format()
   config.timeout = TIMEOUT
   return config
 }
