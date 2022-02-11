@@ -32,7 +32,7 @@ import { TestVocabularyDto } from '@/model/testVocabulary/testVocabularyDto'
 import { TestVocabularyTypeEnum } from '@/model/enums/testVocabularyTypeEnum'
 import { TestVocabularyWordDto } from '@/model/testVocabulary/testVocabularyWordDto'
 import { TestVocabularyResultDto } from '@/model/testVocabulary/testVocabularyResultDto'
-import { Word } from '@/model/wordDto'
+import { Word, WordDto } from '@/model/wordDto'
 import WordCardDirectTest from '@/common/wordCard/wordCardDirectTest.vue'
 
 @Component({
@@ -59,6 +59,7 @@ export default class TestVocabulary extends Vue {
       this.isWord = true
       this.word = testVocabulary
       if (this.word.word) {
+        WordDto.fill(this.word.word)
         this.nextWord = this.word.word
       }
     } else if (testVocabulary.type === TestVocabularyTypeEnum.RESULT) {
