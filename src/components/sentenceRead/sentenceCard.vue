@@ -10,21 +10,9 @@
       <v-btn
         text
         color="error"
-        @click="notTranslate"
-        @keypress.left="notTranslate"
-      >
-        <v-icon class="mr-1">
-          mdi-arrow-left
-        </v-icon>
-        НЕ ПОНЯТНО
-      </v-btn>
-
-      <v-btn
-        text
         @click="translate"
-        @keypress.right="translate"
       >
-        ВСЕ ПОНЯТНО
+        СЛЕДУЮЩЕЕ
         <v-icon class="ml-1">
           mdi-arrow-right
         </v-icon>
@@ -73,10 +61,9 @@ export default class SentenceCard extends Vue {
     this.bookSentence = new BookSentenceDto(sentence.id, sentence.words)
   }
 
-  public notTranslate (): void {
-    this.$emit('not-translate')
-  }
-
+  /**
+   * Следующее предложение
+   */
   public translate (): void {
     this.$emit('translate')
   }
@@ -93,5 +80,4 @@ export default class SentenceCard extends Vue {
 </script>
 
 <style scoped>
-
 </style>

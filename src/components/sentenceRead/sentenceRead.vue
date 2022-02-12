@@ -64,19 +64,6 @@ export default class SentenceRead extends Vue {
       }
     }
   }
-
-  public notTranslate (): void {
-    if (this.sentence) {
-      this.bookSentenceService.failTranslate(this.sentence.id!)
-      this.index++
-      if (this.bookSentences.length <= this.index) {
-        this.bookSentences = []
-        this.sentence = null
-      } else {
-        this.sentence = this.bookSentences[this.index]
-      }
-    }
-  }
 }
 </script>
 
