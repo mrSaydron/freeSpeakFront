@@ -1,4 +1,5 @@
 import { PartOfSpeechEnum } from '@/model/enums/partOfSpeechEnum'
+import { PartOfSpeechDto } from '@/model/partOfSpeechDto'
 
 export interface Word {
   id?: number;
@@ -27,7 +28,7 @@ export class WordDto implements Word {
     public audioId?: string,
     public frequency?: number,
     public frequencyPercent?: string,
-    public partOfSpeechNote?: any,
+    public partOfSpeechNote?: PartOfSpeechDto,
     public userHas?: boolean,
     public pictureUrl?: string,
     public audioUrl?: string

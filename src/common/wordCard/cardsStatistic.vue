@@ -58,7 +58,7 @@
           v-on="on"
         >mdi-information</v-icon>
       </template>
-      <span>Статичтика урока. Для справки наведеите мышку на число</span>
+      <span>Статистика урока. Для справки наведеите мышку на число</span>
     </v-tooltip>
   </v-container>
 </template>

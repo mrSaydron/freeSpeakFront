@@ -6,7 +6,7 @@
     <v-card>
       <v-card-title>{{ word }}</v-card-title>
       <v-card-text>
-        <p>{{ partOfSpeech }}</p>
+        <p v-if="partOfSpeech">{{ partOfSpeech.name }}</p>
         <p>{{ translate }}</p>
         <p v-if="userWordDto.averageBox > 0">
           Номер коробки: {{ userWordDto.averageBox }}
@@ -50,6 +50,7 @@ import { PartOfSpeechEnum } from '@/model/enums/partOfSpeechEnum'
 import UserWordService from '@/services/userWordService'
 import { UserWordDto } from '@/model/userWordDto'
 import { Constants } from '@/model/enums/constants'
+import { PartOfSpeechDto } from '@/model/partOfSpeechDto'
 
 /**
  * Модальное окно с информацией о слове
@@ -72,7 +73,7 @@ export default class SentenceWord extends Vue {
   public userWordDto: UserWordDto = {}
   public word = ''
   public translate = ''
-  public partOfSpeech = ''
+  public partOfSpeech: PartOfSpeechDto | null = null
 
   @Watch('modal')
   public modalWatch (modal: boolean): void {
@@ -90,7 +91,7 @@ export default class SentenceWord extends Vue {
         if (this.userWordDto && this.userWordDto.word) {
           this.word = this.userWordDto.word.word || ''
           this.translate = this.userWordDto.word.translate || ''
-          this.partOfSpeech = this.userWordDto.word.partOfSpeech ? PartOfSpeechEnum[this.userWordDto.word.partOfSpeech] : ''
+          this.partOfSpeech = this.userWordDto.word.partOfSpeech ? PartOfSpeechEnum[this.userWordDto.word.partOfSpeech] : null
         }
 
         if (this.userWordDto && this.userWordDto.word && this.userWordDto.word.audioId) {

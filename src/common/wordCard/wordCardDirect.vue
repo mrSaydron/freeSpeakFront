@@ -35,7 +35,23 @@
       <div v-if="isTurn">
         {{ word.translate }}
       </div>
-      {{ word.partOfSpeechNote }}
+      {{ word.partOfSpeechNote.name }}
+      <v-tooltip
+        v-if="word.partOfSpeechNote.description"
+        bottom
+      >
+        <template
+          v-slot:activator="{ on, attrs }"
+        >
+          <v-icon
+            class="pl-2"
+            color="blue"
+            v-bind="attrs"
+            v-on="on"
+          >mdi-information</v-icon>
+        </template>
+        <span>{{ word.partOfSpeechNote.description }}</span>
+      </v-tooltip>
     </v-card-text>
 
     <!-- третья строка -->
