@@ -55,23 +55,6 @@ export default class BookSentenceService {
   }
 
   /**
-   * Пользователь не смог перевести предложение
-   * PUT /api/book/sentence/read/fail/${bookSentenceId}
-   */
-  public async failTranslate (bookSentenceId: number): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-      axios
-        .put(`${baseApiUrl}/read/fail/${bookSentenceId}`)
-        .then(() => {
-          resolve()
-        })
-        .catch(err => {
-          reject(err)
-        })
-    })
-  }
-
-  /**
    * Предложения из отмеченной книги
    * /api/book/sentence/read-marked-book
    */
