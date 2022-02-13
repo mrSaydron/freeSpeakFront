@@ -16,7 +16,7 @@
     </v-card-title>
     <v-card-text
       v-if="sentence.afterSentences"
-      class="pl-10 pr-10 pt-0"
+      class="pl-12 pr-12 pt-0"
     >
       <sentences-block
         :book-sentences="sentence.afterSentences"
