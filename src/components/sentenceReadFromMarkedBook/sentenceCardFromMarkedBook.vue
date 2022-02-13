@@ -1,12 +1,28 @@
 <template>
-  <v-card>
-    <v-card-title class="justify-center">
+  <v-card class="d-flex flex-column">
+    <v-card-text
+      v-if="sentence.beforeSentences"
+      class="pl-12 pr-12 pb-0"
+    >
+      <sentences-block
+        :book-sentences="sentence.beforeSentences"
+      />
+    </v-card-text>
+    <v-card-title class="pt-0 pb-0">
       <sentence
         :book-sentence="bookSentence"
         @word-click="wordClick"
         @
       ></sentence>
     </v-card-title>
+    <v-card-text
+      v-if="sentence.afterSentences"
+      class="pl-10 pr-10 pt-0"
+    >
+      <sentences-block
+        :book-sentences="sentence.afterSentences"
+      />
+    </v-card-text>
     <v-card-actions class="justify-center">
       <v-btn
         text
@@ -34,6 +50,7 @@ import { BookSentenceReadDto } from '@/model/bookSentenceReadDto'
 import Sentence from '@/common/sentence/sentence.vue'
 import { BookSentenceDto } from '@/model/bookSentenceDto'
 import SentenceWord from '@/common/sentence/sentenceWord.vue'
+import SentencesBlock from '@/common/sentence/sentencesBlock.vue'
 
 /**
  * Предложение для перевода
@@ -41,7 +58,8 @@ import SentenceWord from '@/common/sentence/sentenceWord.vue'
 @Component({
   components: {
     Sentence,
-    SentenceWord
+    SentenceWord,
+    SentencesBlock
   }
 })
 export default class SentenceCardFromMarkedBook extends Vue {
