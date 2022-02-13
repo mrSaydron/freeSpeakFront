@@ -15,7 +15,6 @@
         <sentence-card
           v-else
           :sentence="sentence"
-          @not-translate="notTranslate"
           @translate="translate"
         ></sentence-card>
       </v-col>
@@ -53,8 +52,8 @@ export default class SentenceRead extends Vue {
   }
 
   public translate (): void {
-    if (this.sentence) {
-      this.bookSentenceService.successfulTranslate(this.sentence.id!)
+    if (this.sentence && this.sentence.id) {
+      this.bookSentenceService.successfulTranslate(this.sentence.id)
       this.index++
       if (this.bookSentences.length <= this.index) {
         this.bookSentences = []
