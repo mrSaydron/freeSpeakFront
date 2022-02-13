@@ -8,12 +8,14 @@
         :book-sentences="sentence.beforeSentences"
       />
     </v-card-text>
-    <v-card-title class="pt-0 pb-0">
+    <v-card-text
+      class="pt-0 pb-0 text-h6 black--text"
+    >
       <sentence
         :book-sentence="bookSentence"
         @word-click="wordClick"
       ></sentence>
-    </v-card-title>
+    </v-card-text>
     <v-card-text
       v-if="sentence.afterSentences"
       class="pl-12 pr-12 pt-0"
