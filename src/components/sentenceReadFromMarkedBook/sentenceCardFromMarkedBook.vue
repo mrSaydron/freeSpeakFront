@@ -12,7 +12,6 @@
       <sentence
         :book-sentence="bookSentence"
         @word-click="wordClick"
-        @
       ></sentence>
     </v-card-title>
     <v-card-text
