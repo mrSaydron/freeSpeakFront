@@ -1,7 +1,7 @@
 <template>
   <v-card
     class="ma-2"
-    height="250"
+    height="260"
     width="200"
     flat
     @click="itemClick"
@@ -16,11 +16,11 @@
         style=""
       >{{ getKnow() }}</v-chip>
     </v-img>
-    <v-card-title>
-      {{ galleryItem.title }}
+    <v-card-title class="text-subtitle-1 pt-1">
+      <div class="text-truncate">{{ galleryItem.title }}</div>
     </v-card-title>
-    <v-card-subtitle>
-      {{ galleryItem.author }}
+    <v-card-subtitle class="text-truncate">
+      <div class="text-truncate">{{ galleryItem.author }}</div>
     </v-card-subtitle>
   </v-card>
 </template>

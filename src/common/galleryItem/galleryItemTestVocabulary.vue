@@ -1,7 +1,7 @@
 <template>
   <v-card
     class="ma-2"
-    height="250"
+    height="260"
     width="200"
     flat
     @click="itemClick"
@@ -9,7 +9,7 @@
     <v-img
       height="200"
     ></v-img>
-    <v-card-title>
+    <v-card-title class="text-subtitle-1 pt-1">
       {{ galleryItem.title }}
     </v-card-title>
   </v-card>
