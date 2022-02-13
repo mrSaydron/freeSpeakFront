@@ -86,6 +86,7 @@ export default class SentenceWord extends Vue {
   public async wordModalWatch (wordModal: boolean): Promise<void> {
     this.modal = wordModal
     if (wordModal) {
+      this.reset()
       if (this.wordId) {
         this.userWordDto = await this.userWordService.get(this.wordId)
         if (this.userWordDto && this.userWordDto.word) {
@@ -122,6 +123,13 @@ export default class SentenceWord extends Vue {
       this.userWordService.addWord(this.wordId)
       this.modal = false
     }
+  }
+
+  public reset (): void {
+    this.userWordDto = {}
+    this.word = ''
+    this.translate = ''
+    this.partOfSpeech = null
   }
 }
 </script>
