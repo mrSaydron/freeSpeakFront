@@ -11,7 +11,7 @@
       ></sentence>
     </span>
     <sentence-word
-      :word-id="wordId"
+      :word="word"
       :word-modal="wordModal"
       @modal-close="modalClose"
     ></sentence-word>
@@ -26,6 +26,7 @@ import { Inject, Prop, Vue } from 'vue-property-decorator'
 import WordService from '@/services/wordService'
 import FileService from '@/services/fileService'
 import { BookSentenceDto } from '@/model/bookSentenceDto'
+import { BookSentenceHasWordDto } from '@/model/bookSentenceHasWordDto'
 
 /**
  * Блок из несколькоих предложений
@@ -43,14 +44,13 @@ export default class SentencesBlock extends Vue {
   @Inject() readonly fileService!: FileService
 
   public wordModal = false
-  public wordId: number | null = null
+  public word: BookSentenceHasWordDto | null = null
 
   /**
    * Просмотр перевода слова
-   * @param wordId
    */
-  public wordClick (wordId: number): void {
-    this.wordId = wordId
+  public wordClick (word: BookSentenceHasWordDto): void {
+    this.word = word
     this.wordModal = true
   }
 
