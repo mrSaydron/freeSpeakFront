@@ -4,13 +4,22 @@
     max-width="450px"
   >
     <v-card>
-      <v-card-title>{{ word }}</v-card-title>
+      <v-card-title>
+        {{ wordBase }}
+        <div v-if="partOfSpeech !== partOfSpeechInText && partOfSpeechInText">
+          ({{ wordInText }}: {{ partOfSpeechInText.name }})
+        </div>
+      </v-card-title>
       <v-card-text>
         <p v-if="partOfSpeech">{{ partOfSpeech.name }}</p>
         <p>{{ translate }}</p>
-        <p v-if="userWordDto.averageBox > 0">
-          Номер коробки: {{ userWordDto.averageBox }}
-        </p>
+        <v-rating
+          v-if="userWordDto.averageBox > 0"
+          length="7"
+          :value="userWordDto.averageBox"
+          small
+          readonly
+        ></v-rating>
       </v-card-text>
       <v-card-actions>
         <div v-if="userWordDto.id">
@@ -51,6 +60,7 @@ import UserWordService from '@/services/userWordService'
 import { UserWordDto } from '@/model/userWordDto'
 import { Constants } from '@/model/enums/constants'
 import { PartOfSpeechDto } from '@/model/partOfSpeechDto'
+import { BookSentenceHasWordDto } from '@/model/bookSentenceHasWordDto'
 
 /**
  * Модальное окно с информацией о слове
@@ -61,7 +71,7 @@ import { PartOfSpeechDto } from '@/model/partOfSpeechDto'
 })
 export default class SentenceWord extends Vue {
   @Prop(Boolean) readonly wordModal: boolean | undefined
-  @Prop(Number) readonly wordId: number | undefined
+  @Prop(Object) readonly word: BookSentenceHasWordDto | undefined
 
   @Inject() readonly userWordService!: UserWordService
   @Inject() readonly fileService!: FileService
@@ -71,9 +81,11 @@ export default class SentenceWord extends Vue {
 
   public modal = false
   public userWordDto: UserWordDto = {}
-  public word = ''
+  public wordBase = ''
+  public wordInText = ''
   public translate = ''
   public partOfSpeech: PartOfSpeechDto | null = null
+  public partOfSpeechInText: PartOfSpeechDto | null = null
 
   @Watch('modal')
   public modalWatch (modal: boolean): void {
@@ -87,12 +99,17 @@ export default class SentenceWord extends Vue {
     this.modal = wordModal
     if (wordModal) {
       this.reset()
-      if (this.wordId) {
-        this.userWordDto = await this.userWordService.get(this.wordId)
+      if (this.word && this.word.translateId) {
+        this.userWordDto = await this.userWordService.get(this.word.translateId)
         if (this.userWordDto && this.userWordDto.word) {
-          this.word = this.userWordDto.word.word || ''
+          this.wordBase = this.userWordDto.word.word || ''
           this.translate = this.userWordDto.word.translate || ''
           this.partOfSpeech = this.userWordDto.word.partOfSpeech ? PartOfSpeechEnum[this.userWordDto.word.partOfSpeech] : null
+        }
+
+        if (this.word && this.word.word) {
+          this.wordInText = this.word.word
+          this.partOfSpeechInText = this.word.partOfSpeech ? PartOfSpeechEnum[this.word.partOfSpeech] : null
         }
 
         if (this.userWordDto && this.userWordDto.word && this.userWordDto.word.audioId) {
@@ -105,31 +122,33 @@ export default class SentenceWord extends Vue {
   }
 
   public eraseWord (): void {
-    if (this.wordId) {
-      this.userWordService.eraseWord(this.wordId)
+    if (this.word && this.word.translateId) {
+      this.userWordService.eraseWord(this.word.translateId)
       this.modal = false
     }
   }
 
   public knowWord (): void {
-    if (this.wordId) {
-      this.userWordService.knowWord(this.wordId)
+    if (this.word && this.word.translateId) {
+      this.userWordService.knowWord(this.word.translateId)
       this.modal = false
     }
   }
 
   public addWord (): void {
-    if (this.wordId) {
-      this.userWordService.addWord(this.wordId)
+    if (this.word && this.word.translateId) {
+      this.userWordService.addWord(this.word.translateId)
       this.modal = false
     }
   }
 
   public reset (): void {
     this.userWordDto = {}
-    this.word = ''
+    this.wordBase = ''
+    this.wordInText = ''
     this.translate = ''
     this.partOfSpeech = null
+    this.partOfSpeechInText = null
   }
 }
 </script>

@@ -7,7 +7,7 @@
       <span
         v-if="word.translateId"
         class="pre-wrap hover-span"
-        @click="wordClick(word.translateId)"
+        @click="wordClick(word)"
       >{{word.word}}</span>
       <span
         v-if="!word.translateId"
@@ -22,6 +22,7 @@
 import Component from 'vue-class-component'
 import { Prop, Vue, Watch } from 'vue-property-decorator'
 import { BookSentenceDto } from '@/model/bookSentenceDto'
+import { BookSentenceHasWordDto } from '@/model/bookSentenceHasWordDto'
 
 @Component({
   components: {
@@ -30,8 +31,8 @@ import { BookSentenceDto } from '@/model/bookSentenceDto'
 export default class Sentence extends Vue {
   @Prop(Object) readonly bookSentence: BookSentenceDto | undefined
 
-  public async wordClick (wordId: number) {
-    this.$emit('word-click', wordId)
+  public async wordClick (word: BookSentenceHasWordDto) {
+    this.$emit('word-click', word)
   }
 }
 </script>

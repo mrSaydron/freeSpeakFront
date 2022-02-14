@@ -12,7 +12,7 @@
       ></sentence>
     </span>
     <sentence-word
-      :word-id="wordId"
+      :word="word"
       :word-modal="wordModal"
       @modal-close="modalClose"
     ></sentence-word>
@@ -28,6 +28,7 @@ import FileService from '@/services/fileService'
 import Sentence from '@/common/sentence/sentence.vue'
 import SentenceWord from '@/common/sentence/sentenceWord.vue'
 import { BookSentenceUnionDto } from '@/model/bookSentenceUnionDto'
+import { BookSentenceHasWordDto } from '@/model/bookSentenceHasWordDto'
 
 @Component({
   components: {
@@ -44,7 +45,7 @@ export default class BookText extends Vue {
   public wordModal = false
   public wordId: number | null = null
   public wordDto: WordDto = {}
-  public word = ''
+  public word: BookSentenceHasWordDto | null = null
   public translate = ''
   public userHas = false
   public bookmarkSentenceId?: number
@@ -96,10 +97,9 @@ export default class BookText extends Vue {
 
   /**
    * Просмотр перевода слова
-   * @param wordId
    */
-  public wordClick (wordId: number): void {
-    this.wordId = wordId
+  public wordClick (word: BookSentenceHasWordDto): void {
+    this.word = word
     this.wordModal = true
   }
 

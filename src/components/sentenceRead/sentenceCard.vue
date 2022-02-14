@@ -37,7 +37,7 @@
     </v-card-actions>
     <sentence-word
       :wordModal="wordModal"
-      :word-id="wordId"
+      :word="word"
       @modal-close="modalClose"
     ></sentence-word>
   </v-card>
@@ -51,6 +51,7 @@ import Sentence from '@/common/sentence/sentence.vue'
 import { BookSentenceDto } from '@/model/bookSentenceDto'
 import SentenceWord from '@/common/sentence/sentenceWord.vue'
 import SentencesBlock from '@/common/sentence/sentencesBlock.vue'
+import { BookSentenceHasWordDto } from '@/model/bookSentenceHasWordDto'
 
 /**
  * Предложение для перевода
@@ -67,7 +68,7 @@ export default class SentenceCard extends Vue {
 
   public bookSentence: BookSentenceDto | null = null
   public wordModal = false
-  public wordId: number | null = null
+  public word: BookSentenceHasWordDto | null = null
 
   public async mounted () {
     if (this.sentence) {
@@ -87,8 +88,8 @@ export default class SentenceCard extends Vue {
     this.$emit('translate')
   }
 
-  public wordClick (wordId: number): void {
-    this.wordId = wordId
+  public wordClick (word: BookSentenceHasWordDto): void {
+    this.word = word
     this.wordModal = true
   }
 
