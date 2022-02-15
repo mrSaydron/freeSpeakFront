@@ -7,11 +7,10 @@
   </v-app>
 </template>
 
-<script>
+<script lang="ts">
 import Component from 'vue-class-component'
 import { Vue } from 'vue-property-decorator'
-
-import Header from '@/components/header/header'
+import Header from '@/components/header/header.vue'
 
 @Component({
   components: {

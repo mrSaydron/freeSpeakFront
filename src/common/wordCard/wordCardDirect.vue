@@ -133,9 +133,31 @@ export default class WordCardDirect extends Vue {
   public word: WordDto | null = null
   public isTurn = false
 
+  public created () {
+    document.addEventListener('keydown', this.pressKey)
+  }
+
+  public beforeDestroy () {
+    document.removeEventListener('keydown', this.pressKey)
+  }
+
+  public pressKey (event: any) {
+    if (this.card) {
+      if (event.code === 'ArrowLeft') {
+        this.notRemember()
+      } else if (event.code === 'ArrowRight') {
+        if (this.canToKnow) {
+          this.know()
+        } else {
+          this.remember()
+        }
+      } else if (event.code === 'ArrowUp' || event.code === 'ArrowDown') {
+        this.turn()
+      }
+    }
+  }
+
   public mounted (): void {
-    console.log('card mounted')
-    console.log(this.card)
     if (this.card) {
       this.wordChange(this.card)
     }
