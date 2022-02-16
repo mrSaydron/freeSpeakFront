@@ -86,6 +86,26 @@ export default class WordCardDirectTest extends Vue {
 
   public isTurn = false
 
+  public created () {
+    document.addEventListener('keydown', this.pressKey)
+  }
+
+  public beforeDestroy () {
+    document.removeEventListener('keydown', this.pressKey)
+  }
+
+  public pressKey (event: any) {
+    if (this.word) {
+      if (event.code === 'ArrowLeft') {
+        this.notRemember()
+      } else if (event.code === 'ArrowRight') {
+        this.remember()
+      } else if (event.code === 'ArrowUp' || event.code === 'ArrowDown') {
+        this.turn()
+      }
+    }
+  }
+
   public mounted (): void {
     if (this.word) {
       this.wordChange(this.word)
