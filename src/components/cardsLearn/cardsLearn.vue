@@ -26,13 +26,7 @@
     </v-row>
     <v-row>
       <v-col>
-        <v-card
-          v-if="cardType === 'plug'"
-        >
-          <v-card-title class="justify-center">
-            На сегодня слов больше нет
-          </v-card-title>
-        </v-card>
+        <plug-card v-if="cardType === 'plug'"/>
         <word-card-direct
           v-if="cardType === 'direct'"
           :card="card"
@@ -47,7 +41,7 @@
 
 <script lang="ts">
 import Component from 'vue-class-component'
-import { Inject, Prop, Vue } from 'vue-property-decorator'
+import { Inject, Vue } from 'vue-property-decorator'
 import WordCardDirect from '@/common/wordCard/wordCardDirect.vue'
 import UserWordService from '@/services/userWordService'
 import { SortValue } from '@/util/sortValue'
@@ -55,11 +49,13 @@ import { Card } from '@/model/card'
 import { UserWordDto } from '@/model/userWordDto'
 import { Constants } from '@/model/enums/constants'
 import CardsStatistic from '@/common/wordCard/cardsStatistic.vue'
+import PlugCard from '@/common/wordCard/plugCard.vue'
 
 @Component({
   components: {
     WordCardDirect,
-    CardsStatistic
+    CardsStatistic,
+    PlugCard
   }
 })
 export default class CardsLearn extends Vue {
@@ -79,6 +75,8 @@ export default class CardsLearn extends Vue {
   public newCards = 0 // новых карточек
   public knowCards = 0 // карточек отмеченных как знакомое слово
 
+  public cardsGot = false // карточки получены с бэка
+
   public async mounted () {
     this.leftHearts = await this.userWordService.getLeftHearts()
     const words = await this.userWordService.getWordOfDay()
@@ -91,6 +89,7 @@ export default class CardsLearn extends Vue {
     if (this.cards.length > 0) {
       this.card = this.cards[0]
     }
+    this.cardsGot = true
   }
 
   get word (): UserWordDto {
@@ -98,9 +97,12 @@ export default class CardsLearn extends Vue {
   }
 
   get cardType (): string {
-    let result = 'plug'
+    let result = 'none'
     if (this.card && this.card.wordProgress && this.card.wordProgress.type) {
       result = this.card.wordProgress.type
+    }
+    if (this.cardsGot && !this.card) {
+      result = 'plug'
     }
     return result
   }

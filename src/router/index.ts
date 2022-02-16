@@ -21,6 +21,7 @@ let lastPage: Route | null = null
 const routes: Array<RouteConfig> = [
   {
     path: '/',
+    name: 'home',
     component: Home,
     meta: {
       authorities: [Authority.NO_AUTHORITY, Authority.USER]
