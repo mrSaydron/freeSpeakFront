@@ -1,11 +1,10 @@
 <template>
   <v-card>
-    <v-card-title>
+    <v-card-title class="justify-center">
       На сегодня слов больше нет
     </v-card-title>
-    <v-card-actions >
+    <v-card-actions class="justify-center">
       <v-btn
-        class="text-center"
         text
         @click="toHome"
       >
