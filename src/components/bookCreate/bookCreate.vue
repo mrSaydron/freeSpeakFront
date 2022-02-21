@@ -54,9 +54,9 @@
             v-model="book.author"
             label="Автор"
           ></v-text-field>
-          <text-tag-combobox
+          <text-tag-multiply-combobox
             v-model="book.textTags"
-          ></text-tag-combobox>
+          ></text-tag-multiply-combobox>
         </v-col>
       </v-row>
       <v-row class="mt-3">
@@ -87,12 +87,11 @@ import BookService from '@/services/bookService'
 import { BookCreateDto } from '@/model/bookCreateDto'
 import FileService from '@/services/fileService'
 import TextTagService from '@/services/textTagService'
-import { TextTag, TextTagDto } from '@/model/textTagDto'
-import TextTagCombobox from '@/common/textTagCombobox.vue'
+import TextTagMultiplyCombobox from '@/common/textTag/textTagMultiplyCombobox.vue'
 
 @Component({
   components: {
-    TextTagCombobox
+    TextTagMultiplyCombobox
   }
 })
 export default class BookCreate extends Vue {

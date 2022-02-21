@@ -13,6 +13,9 @@ import SentenceRead from '@/components/sentenceRead/sentenceRead.vue'
 import Home from '@/components/home/home.vue'
 import MarkSentenceRead from '@/components/sentenceReadFromMarkedBook/sentenceReadFromMarkedBook.vue'
 import TestVocabulary from '@/components/testVocabulary/testVocabulary.vue'
+import TextTags from '@/components/textTag/textTags.vue'
+import TextTag from '@/components/textTag/textTag.vue'
+import TextTagCreate from '@/components/textTag/textTagCreate.vue'
 
 Vue.use(VueRouter)
 
@@ -123,6 +126,40 @@ const routes: Array<RouteConfig> = [
       authorities: [Authority.USER],
       backPage: () => {
         return '/'
+      }
+    }
+  },
+  {
+    path: '/text-tags',
+    name: 'textTags',
+    component: TextTags,
+    meta: {
+      authorities: [Authority.ADMIN],
+      backPage: () => {
+        return '/'
+      }
+    }
+  },
+  {
+    path: '/text-tag-create',
+    name: 'textTagCreate',
+    component: TextTagCreate,
+    meta: {
+      authorities: [Authority.ADMIN],
+      backPage: () => {
+        return '/text-tags'
+      }
+    }
+  },
+  {
+    path: '/text-tag/:id',
+    name: 'textTag',
+    component: TextTag,
+    props: true,
+    meta: {
+      authorities: [Authority.ADMIN],
+      backPage: () => {
+        return '/text-tags'
       }
     }
   },
