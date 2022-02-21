@@ -6,8 +6,10 @@
     <v-card>
       <v-card-title>
         {{ wordBase }}
-        <div v-if="partOfSpeech !== partOfSpeechInText && partOfSpeechInText">
-          ({{ wordInText }}: {{ partOfSpeechInText.name }})
+        <div
+          class="pl-3"
+          v-if="partOfSpeech !== partOfSpeechInText && partOfSpeechInText"
+        >({{ wordInText }}: {{ partOfSpeechInText.name }})
         </div>
       </v-card-title>
       <v-card-text>
