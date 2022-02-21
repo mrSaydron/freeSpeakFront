@@ -3,7 +3,7 @@ import { TextTagDto } from '@/model/textTagDto'
 
 const baseApiUrl = '/api/text-tag'
 
-export default class WordService {
+export default class TextTagService {
   public get (id: number): Promise<TextTagDto> {
     return new Promise<TextTagDto>((resolve, reject) => {
       axios

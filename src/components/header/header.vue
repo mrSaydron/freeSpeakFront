@@ -48,7 +48,7 @@ import { Vue } from 'vue-property-decorator'
 
 import BookMenu from '@/components/header/bookMenu.vue'
 import DictionaryMenu from '@/components/header/dictionaryMenu.vue'
-import UserMenu from '@/components/header/userMenu.vue'
+import UserMenu from '@/common/userMenu/userMenu.vue'
 
 @Component({
   components: {

@@ -1,4 +1,3 @@
-import { SortDirection } from '@/model/enums/sortDirection'
 <template>
   <v-container>
     <v-text-field

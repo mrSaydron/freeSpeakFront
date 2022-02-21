@@ -1,5 +1,4 @@
 <template>
-<!--  <div>text tag combobox</div>-->
   <v-combobox
     v-if="tags && tags.length > 0"
     v-model="value"
@@ -24,7 +23,7 @@ import { TextTagDto } from '@/model/textTagDto'
   components: {
   }
 })
-export default class TextTagCombobox extends Vue {
+export default class TextTagMultiplyCombobox extends Vue {
   @Inject() readonly textTagService!: TextTagService
 
   @Prop(Array) readonly value?: TextTagDto[]
