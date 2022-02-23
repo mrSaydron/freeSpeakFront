@@ -5,11 +5,11 @@ module.exports = {
   devServer: {
     proxy: {
       '^/api': {
-        target: 'http://localhost:4000',
+        target: process.env.VUE_APP_PROXY,
         ws: true,
         changeOrigin: true,
         secure: false,
-        pathRewrite: {'^/api': '/api'},
+        pathRewrite: { '^/api': '/api' },
         logLevel: 'debug'
       }
     }
