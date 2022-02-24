@@ -1,5 +1,4 @@
 import axios from 'axios'
-import loginForm from '@/components/account/loginForm.vue'
 import moment from 'moment'
 
 const TIMEOUT = 1000000
